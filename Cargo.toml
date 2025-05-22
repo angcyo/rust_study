@@ -30,3 +30,12 @@ mime = "0.3.17"
 # 邮件发送
 # https://crates.io/crates/mail-send
 mail-send = "0.5.1"
+# SMTP
+# https://crates.io/crates/async-smtp
+# async-smtp = "0.10.2"
+# 邮件发送
+# https://crates.io/crates/lettre
+lettre = "0.11.16"
+# 时间处理
+# https://crates.io/crates/chrono
+chrono = "0.4.41"

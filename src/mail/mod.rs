@@ -1,3 +1,6 @@
+use lettre::message::header::ContentType;
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::{Message, SmtpTransport, Transport};
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::SmtpClientBuilder;
 
@@ -46,4 +49,39 @@ pub async fn send_mail(
         .send(message)
         .await
         .unwrap();
+}
+
+pub async fn send_mail_lettre(
+    from: (String, String),
+    to: (String, String),
+    title: &str,
+    html_body: &str,
+    text_body: &str,
+    //--
+    host: (&str, u16),
+    credentials: (&str, &str),
+) {
+    let email = Message::builder()
+        .from(format!("{} <{}>", from.0, from.1).parse().unwrap())
+        //.reply_to(format!("{} <{}>", from.0, from.1).parse().unwrap())
+        .to(format!("{} <{}>", to.0, to.1).parse().unwrap())
+        .subject(title)
+        .header(ContentType::TEXT_HTML)
+        .body(if html_body.is_empty() {
+            text_body.to_string()
+        } else {
+            html_body.to_string()
+        })
+        .unwrap();
+
+    let creds = Credentials::new(credentials.0.to_owned(), credentials.1.to_owned());
+
+    // Open a remote connection to gmail
+    let mailer = SmtpTransport::relay(host.0)
+        .unwrap()
+        .credentials(creds)
+        .build();
+
+    // Send the email
+    mailer.send(&email).unwrap();
 }
