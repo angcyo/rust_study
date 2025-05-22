@@ -4,6 +4,7 @@ use colored::Colorize;
 mod args;
 mod https;
 mod macros;
+mod mail;
 
 #[allow(dead_code)]
 fn test_macro() {
@@ -43,11 +44,8 @@ async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[tokio::main]
-#[allow(arithmetic_overflow)]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //test_macro();
-    //test_html2md().await?;
+#[allow(dead_code)]
+fn test_args() {
     let args = args::Args::parse();
 
     for _ in 0..args.count {
@@ -59,5 +57,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         //println!("Hello {:?}!", args.name.as_ref().unwrap());
     }
+}
+
+#[allow(dead_code)]
+async fn test_send_mail() {
+    mail::send_mail(
+        ("angcyo".to_string(), "angcyo@laserabc.com".to_string()),
+        ("angcyo".to_string(), "angcyo@126.com".to_string()),
+        "title",
+        "<h1>Hello, angcyo html!</h1>",
+        "Hello angcyo text!",
+        ("smtp.feishu.cn", 465),
+        ("", ""),
+    )
+    .await;
+}
+
+#[tokio::main]
+#[allow(arithmetic_overflow)]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    //test_macro();
+    //test_html2md().await?;
+    //test_args();
+    test_send_mail().await;
     Ok(())
 }

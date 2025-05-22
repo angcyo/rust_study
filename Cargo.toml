@@ -27,3 +27,6 @@ jsonxf = "1.1.1"
 #  处理 mime 类型
 # https://crates.io/crates/mime
 mime = "0.3.17"
+# 邮件发送
+# https://crates.io/crates/mail-send
+mail-send = "0.5.1"
