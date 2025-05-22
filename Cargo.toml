@@ -4,9 +4,26 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+# HTTP 客户端
 # https://crates.io/crates/reqwest
-reqwest = "0.12.15"
+reqwest = { version = "0.12.15", features = ["json"] }
+# 异步处理库
 # https://crates.io/crates/tokio
 tokio = { version = "1.45.0", features = ["full"] }
 # https://crates.io/crates/html2md
 html2md = "0.2.15"
+# 错误处理
+# https://crates.io/crates/anyhow
+anyhow = "1.0.98"
+# 命令行解析
+# https://crates.io/crates/clap
+clap = { version = "4.5.38", features = ["derive"] }
+# 命令终端多彩显示
+# https://crates.io/crates/colored
+colored = "3.0.0"
+# JSON pretty print 格式化
+# https://crates.io/crates/jsonxf
+jsonxf = "1.1.1"
+#  处理 mime 类型
+# https://crates.io/crates/mime
+mime = "0.3.17"

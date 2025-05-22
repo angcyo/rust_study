@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+# 使用默认平台编译 `rustup show active-toolchain`
+# stable-aarch64-apple-darwin (default)
+# 输出目录在 ./release
+
+cargo build --release --package rust_study
