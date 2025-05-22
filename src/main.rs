@@ -62,13 +62,13 @@ fn test_args() {
 
 #[allow(dead_code)]
 async fn test_send_mail() {
-    mail::send_mail_lettre(
+    mail::send_mail(
         ("no-reply".to_string(), "no-reply@laserabc.com".to_string()),
         ("angcyo".to_string(), "angcyo@126.com".to_string()),
         format!("title - {}", utils::now_timestamp()).as_str(),
         format!("<h1>Hello, body. <sup>html</sup>! {}</h1>", utils::now_date_time()).as_str(),
         format!("Hello body. <sup>text</sup>! {}", utils::now_date_time()).as_str(),
-        ("smtp.feishu.cn", 465),
+        ("smtp.feishu.cn", 25),
         ("no-reply@laserabc.com", ""),
     )
     .await;

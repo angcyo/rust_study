@@ -1,6 +1,7 @@
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
+use lettre::transport::smtp::client::Tls;
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::SmtpClientBuilder;
 
@@ -51,6 +52,7 @@ pub async fn send_mail(
         .unwrap();
 }
 
+/// https://crates.io/crates/lettre
 pub async fn send_mail_lettre(
     from: (String, String),
     to: (String, String),
@@ -79,7 +81,10 @@ pub async fn send_mail_lettre(
     // Open a remote connection to gmail
     let mailer = SmtpTransport::relay(host.0)
         .unwrap()
+        .port(host.1)
+        .tls(Tls::None)
         .credentials(creds)
+        .timeout(Some(std::time::Duration::from_secs(5)))
         .build();
 
     // Send the email
