@@ -1,0 +1,12 @@
+[package]
+name = "rust_study"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# https://crates.io/crates/reqwest
+reqwest = "0.12.15"
+# https://crates.io/crates/tokio
+tokio = { version = "1.45.0", features = ["full"] }
+# https://crates.io/crates/html2md
+html2md = "0.2.15"
