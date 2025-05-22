@@ -5,6 +5,7 @@ mod args;
 mod https;
 mod macros;
 
+#[allow(dead_code)]
 fn test_macro() {
     //println!("Hello, world!");
     println!();
@@ -22,6 +23,7 @@ fn test_macro() {
     dbg!(10 / 3);
 }
 
+#[allow(dead_code)]
 async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     let url = "https://www.rust-lang.org";
     let output = ".output/rust.md";
@@ -47,11 +49,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //test_macro();
     //test_html2md().await?;
     let args = args::Args::parse();
-    
+
     for _ in 0..args.count {
         if let Some(name) = args.name.as_ref() {
             ptl!("Hello {}!", name.green().bold()); //>Hello angcyo!
-            //ptl!("Hello {:?}!", name);//>Hello "angcyo"!
+        //ptl!("Hello {:?}!", name);//>Hello "angcyo"!
         } else {
             println!("Please use {} run.", "`--name xxx`".red().bold());
         }
