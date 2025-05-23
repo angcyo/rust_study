@@ -1,3 +1,5 @@
+use base64::engine::general_purpose::STANDARD;
+use base64::{DecodeError, Engine};
 use chrono::Utc;
 use simple_logger::SimpleLogger;
 
@@ -18,6 +20,33 @@ pub fn now_timestamp() -> i64 {
 #[allow(dead_code)]
 pub fn now_date_time() -> String {
     Utc::now().to_string()
+}
+
+//--
+
+/// 将字节数组转换成utf8字符串
+#[allow(dead_code)]
+pub fn bytes_to_string(bytes: &[u8]) -> String {
+    String::from_utf8_lossy(bytes).to_string()
+    //String::from_utf8(bytes.to_vec()).unwrap()
+}
+
+/// 将utf8字符串转换成字节数组
+#[allow(dead_code)]
+pub fn string_to_bytes(s: &str) -> Vec<u8> {
+    s.as_bytes().to_vec()
+}
+
+/// 将字节数组进行base64加密
+#[allow(dead_code)]
+pub fn base64_encode(bytes: &[u8]) -> String {
+    STANDARD.encode(bytes)
+}
+
+/// 将base64的字符串进行解密
+#[allow(dead_code)]
+pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
+    STANDARD.decode(s)
 }
 
 //--

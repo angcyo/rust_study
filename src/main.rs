@@ -67,12 +67,29 @@ async fn test_send_mail() {
         ("no-reply".to_string(), "no-reply@laserabc.com".to_string()),
         ("angcyo".to_string(), "angcyo@126.com".to_string()),
         format!("title - {}", utils::now_timestamp()).as_str(),
-        format!("<h1>Hello, body. <sup>html</sup>! {}</h1>", utils::now_date_time()).as_str(),
+        format!(
+            "<h1>Hello, body. <sup>html</sup>! {}</h1>",
+            utils::now_date_time()
+        )
+        .as_str(),
         format!("Hello body. <sup>text</sup>! {}", utils::now_date_time()).as_str(),
         ("smtp.feishu.cn", 25),
         ("no-reply@laserabc.com", ""),
     )
     .await;
+}
+
+#[allow(dead_code)]
+fn test_utf8() {
+    let str = "你好, 中国! angcyo";
+    let bytes = utils::string_to_bytes(str);
+    let base64 = utils::base64_encode(bytes.as_slice());
+    log::warn!("{}", str);
+    ptl!("{}:{}", utils::bytes_to_string(bytes.as_slice()), base64);
+    ptl!(
+        "{}",
+        utils::bytes_to_string(utils::base64_decode(base64.as_str()).unwrap().as_slice())
+    );
 }
 
 #[tokio::main]
@@ -83,6 +100,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //test_html2md().await?;
     //test_args();
     //test_send_mail().await;
-    web::start_serve().await;
+    //web::start_serve().await;
+    test_utf8();
     Ok(())
 }
