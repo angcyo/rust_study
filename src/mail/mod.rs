@@ -1,7 +1,7 @@
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
-use lettre::{Message, SmtpTransport, Transport};
 use lettre::transport::smtp::client::Tls;
+use lettre::{Message, SmtpTransport, Transport};
 use mail_send::mail_builder::MessageBuilder;
 use mail_send::SmtpClientBuilder;
 
@@ -20,6 +20,7 @@ use mail_send::SmtpClientBuilder;
 /// [credentials] 用户名 和 密码
 ///
 /// https://crates.io/crates/mail-send
+#[allow(dead_code)]
 pub async fn send_mail(
     from: (String, String),
     to: (String, String),
@@ -53,6 +54,7 @@ pub async fn send_mail(
 }
 
 /// https://crates.io/crates/lettre
+#[allow(dead_code)]
 pub async fn send_mail_lettre(
     from: (String, String),
     to: (String, String),

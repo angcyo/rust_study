@@ -6,6 +6,7 @@ mod https;
 mod macros;
 mod mail;
 mod utils;
+mod web;
 
 #[allow(dead_code)]
 fn test_macro() {
@@ -77,9 +78,11 @@ async fn test_send_mail() {
 #[tokio::main]
 #[allow(arithmetic_overflow)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    utils::init_utils();
     //test_macro();
     //test_html2md().await?;
     //test_args();
-    test_send_mail().await;
+    //test_send_mail().await;
+    //web::start_serve().await;
     Ok(())
 }
