@@ -9,6 +9,16 @@ use simple_logger::SimpleLogger;
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/05/22
 ///
+/// 获取当前工作目录
+#[allow(dead_code)]
+pub fn get_current_dir() -> String {
+    std::env::current_dir()
+        .unwrap()
+        .to_str()
+        .unwrap()
+        .to_string()
+}
+
 /// 获取当前13位毫秒时间戳
 #[allow(dead_code)]
 pub fn now_timestamp() -> i64 {
@@ -32,6 +42,15 @@ pub fn uuid() -> String {
         .to_string()
         .to_uppercase()
         .replace("-", "")
+}
+
+/// 确保文件对应的文件夹存在
+#[allow(dead_code)]
+pub fn ensure_dir_exist(file_path: &str) {
+    let dir = std::path::Path::new(file_path).parent().unwrap();
+    if !dir.exists() {
+        std::fs::create_dir_all(dir).unwrap();
+    }
 }
 
 //--

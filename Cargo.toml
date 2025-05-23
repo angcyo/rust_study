@@ -74,3 +74,12 @@ uuid = "1.17.0"
 # 随机数
 # https://crates.io/crates/rand
 rand = "0.9.1"
+# 字节处理
+# https://crates.io/crates/bytes
+bytes = "1.10.1"
+# 图片处理
+# https://crates.io/crates/image
+image = "0.25.6"
+# 图片处理
+# https://crates.io/crates/imageproc
+imageproc = "0.25.0"

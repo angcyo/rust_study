@@ -4,10 +4,17 @@ use colored::Colorize;
 
 mod args;
 mod https;
+mod image;
 mod macros;
 mod mail;
 mod utils;
 mod web;
+
+#[allow(dead_code)]
+fn ensure_output_dir_exist() {
+    let output = ".output/xxx.out";
+    utils::ensure_dir_exist(output);
+}
 
 #[allow(dead_code)]
 fn test_macro() {
@@ -36,10 +43,7 @@ async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     let body = https::get_url_text(url).await?;
 
     // Create output directory
-    let output_dir = std::path::Path::new(output).parent().unwrap();
-    if !output_dir.exists() {
-        std::fs::create_dir_all(output_dir).unwrap();
-    }
+    utils::ensure_dir_exist(output);
     ptl!("Converting html to markdown...");
     let md = html2md::parse_html(&body);
     std::fs::write(output, md.as_bytes()).unwrap();
@@ -99,10 +103,21 @@ fn test_utf8() {
     );
 }
 
+#[allow(dead_code)]
+fn test_image() {
+    ensure_output_dir_exist();
+    image::read_image_file("tests/FaceQ.png")
+        .unwrap()
+        .grayscale() // 灰度处理
+        .save(".output/FaceQ_output.png")
+        .unwrap();
+}
+
 #[tokio::main]
 #[allow(arithmetic_overflow)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     utils::init_utils();
+    log::info!("{}", utils::get_current_dir());
     log::debug!(
         "{} {} {}",
         uuid(),
@@ -115,5 +130,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //test_send_mail().await;
     //web::start_serve().await;
     test_utf8();
+    test_image();
     Ok(())
 }
