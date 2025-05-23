@@ -84,8 +84,14 @@ fn test_utf8() {
     let str = "你好, 中国! angcyo";
     let bytes = utils::string_to_bytes(str);
     let base64 = utils::base64_encode(bytes.as_slice());
+    let md5 = utils::md5_encode(bytes.as_slice());
     log::warn!("{}", str);
-    ptl!("{}:{}", utils::bytes_to_string(bytes.as_slice()), base64);
+    ptl!(
+        "{} base64: {} md5: {}",
+        utils::bytes_to_string(bytes.as_slice()),
+        base64,
+        md5
+    );
     ptl!(
         "{}",
         utils::bytes_to_string(utils::base64_decode(base64.as_str()).unwrap().as_slice())

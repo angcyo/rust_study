@@ -2144,6 +2144,7 @@ dependencies = [
  "lettre",
  "log",
  "mail-send",
+ "md5",
  "mime",
  "reqwest",
  "serde_json",

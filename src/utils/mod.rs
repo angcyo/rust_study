@@ -49,6 +49,12 @@ pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
     STANDARD.decode(s)
 }
 
+/// 将字节数组进行md5加密
+#[allow(dead_code)]
+pub fn md5_encode(bytes: &[u8]) -> String {
+    format!("{:X}", md5::compute(bytes))
+}
+
 //--
 
 /// 初始化工具类
