@@ -103,7 +103,12 @@ fn test_utf8() {
 #[allow(arithmetic_overflow)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     utils::init_utils();
-    log::debug!("{}", uuid());
+    log::debug!(
+        "{} {} {}",
+        uuid(),
+        utils::random_f64(),
+        utils::random_range(0..100)
+    );
     //test_macro();
     //test_html2md().await?;
     //test_args();

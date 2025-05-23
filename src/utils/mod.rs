@@ -1,6 +1,8 @@
 use base64::engine::general_purpose::STANDARD;
 use base64::{DecodeError, Engine};
 use chrono::Utc;
+use rand::distr::uniform::{SampleRange, SampleUniform};
+use rand::Rng;
 use simple_logger::SimpleLogger;
 
 ///
@@ -26,7 +28,10 @@ pub fn now_date_time() -> String {
 /// `03B5916C0B104D619BD43D5148837217`
 #[allow(dead_code)]
 pub fn uuid() -> String {
-    uuid::Uuid::new_v4().to_string().to_uppercase().replace("-", "")
+    uuid::Uuid::new_v4()
+        .to_string()
+        .to_uppercase()
+        .replace("-", "")
 }
 
 //--
@@ -61,6 +66,27 @@ pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
 #[allow(dead_code)]
 pub fn md5_encode(bytes: &[u8]) -> String {
     format!("{:X}", md5::compute(bytes))
+}
+
+//--
+
+/// 随机生成一个浮点数
+#[allow(dead_code)]
+pub fn random_f64() -> f64 {
+    let mut rng = rand::rng();
+    rng.random()
+}
+
+/// 在一个范围内随机
+/// `random_range(0..100)`
+#[allow(dead_code)]
+pub fn random_range<T, R>(range: R) -> T
+where
+    T: SampleUniform,
+    R: SampleRange<T>,
+{
+    let mut rng = rand::rng();
+    rng.random_range(range)
 }
 
 //--

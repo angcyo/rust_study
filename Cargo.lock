@@ -2146,6 +2146,7 @@ dependencies = [
  "mail-send",
  "md5",
  "mime",
+ "rand 0.9.1",
  "reqwest",
  "serde_json",
  "simple_logger",

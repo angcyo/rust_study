@@ -71,3 +71,6 @@ md5 = "0.7.0"
 # uuid
 # https://crates.io/crates/uuid
 uuid = "1.17.0"
+# 随机数
+# https://crates.io/crates/rand
+rand = "0.9.1"
