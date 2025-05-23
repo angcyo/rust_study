@@ -2752,6 +2752,7 @@ dependencies = [
  "image",
  "imageproc",
  "jsonxf",
+ "lazy_static",
  "lettre",
  "log",
  "mail-send",

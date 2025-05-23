@@ -83,3 +83,6 @@ image = "0.25.6"
 # 图片处理
 # https://crates.io/crates/imageproc
 imageproc = "0.25.0"
+# 懒加载
+# https://crates.io/crates/lazy_static
+lazy_static = "1.5.0"

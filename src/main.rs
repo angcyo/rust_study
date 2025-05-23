@@ -1,6 +1,8 @@
 use crate::utils::uuid;
 use clap::Parser;
 use colored::Colorize;
+use lazy_static::lazy_static;
+use std::collections::HashMap;
 
 mod args;
 mod https;
@@ -113,6 +115,27 @@ fn test_image() {
         .unwrap();
 }
 
+//--
+
+lazy_static! {
+    static ref MAP: serde_json::Map<String, serde_json::Value> = {
+        let mut m = serde_json::Map::new();
+        m.insert(
+            "0".to_string(),
+            serde_json::Value::String("foo".to_string()),
+        );
+        m.insert(
+            "1".to_string(),
+            serde_json::Value::String("bar".to_string()),
+        );
+        m.insert(
+            "2".to_string(),
+            serde_json::Value::String("baz".to_string()),
+        );
+        m
+    };
+}
+
 #[tokio::main]
 #[allow(arithmetic_overflow)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -124,6 +147,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         utils::random_f64(),
         utils::random_range(0..100)
     );
+    //--
+    //serde_json::json!(serde_json::from_value(serde_json::Value::Object(MAP.clone())).unwrap());
+    /*log::info!(
+        "{:?}",
+        serde_json::from_value(serde_json::Value::Object(MAP.clone())).unwrap()
+    );*/
+    MAP.keys().for_each(|k| {
+        log::info!("key:{} value:{}", k, MAP.get(k).unwrap());
+    });
     //test_macro();
     //test_html2md().await?;
     //test_args();
