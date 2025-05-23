@@ -22,6 +22,13 @@ pub fn now_date_time() -> String {
     Utc::now().to_string()
 }
 
+/// 生成一个uuid
+/// `03B5916C0B104D619BD43D5148837217`
+#[allow(dead_code)]
+pub fn uuid() -> String {
+    uuid::Uuid::new_v4().to_string().to_uppercase().replace("-", "")
+}
+
 //--
 
 /// 将字节数组转换成utf8字符串
@@ -50,6 +57,7 @@ pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
 }
 
 /// 将字节数组进行md5加密
+/// `93E11B05413C8F043BFFCFC5C3D6E68B`
 #[allow(dead_code)]
 pub fn md5_encode(bytes: &[u8]) -> String {
     format!("{:X}", md5::compute(bytes))

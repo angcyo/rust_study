@@ -68,3 +68,6 @@ base64 = "0.22.1"
 # md5
 # https://crates.io/crates/md5
 md5 = "0.7.0"
+# uuid
+# https://crates.io/crates/uuid
+uuid = "1.17.0"

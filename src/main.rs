@@ -1,3 +1,4 @@
+use crate::utils::uuid;
 use clap::Parser;
 use colored::Colorize;
 
@@ -102,6 +103,7 @@ fn test_utf8() {
 #[allow(arithmetic_overflow)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     utils::init_utils();
+    log::debug!("{}", uuid());
     //test_macro();
     //test_html2md().await?;
     //test_args();
