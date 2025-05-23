@@ -11,6 +11,7 @@ mod macros;
 mod mail;
 mod utils;
 mod web;
+mod protocol;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
@@ -156,6 +157,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     MAP.keys().for_each(|k| {
         log::info!("key:{} value:{}", k, MAP.get(k).unwrap());
     });
+    //serde_json::to_string(MAP.);
     //test_macro();
     //test_html2md().await?;
     //test_args();
@@ -163,5 +165,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //web::start_serve().await;
     test_utf8();
     test_image();
+    
+    //protocol::items::Shirt::try_into();
+    
+    
     Ok(())
 }

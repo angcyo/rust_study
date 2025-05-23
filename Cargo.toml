@@ -3,6 +3,11 @@ name = "rust_study"
 version = "0.1.0"
 edition = "2024"
 
+[build-dependencies]
+# Protobuf 编译工具
+# https://crates.io/crates/prost-build
+prost-build = "0.13.5"
+
 [dependencies]
 # HTTP 客户端
 # https://crates.io/crates/reqwest
@@ -86,3 +91,12 @@ imageproc = "0.25.0"
 # 懒加载
 # https://crates.io/crates/lazy_static
 lazy_static = "1.5.0"
+# LRU缓存
+# https://crates.io/crates/lru
+lru = "0.14.0"
+# 图片处理
+# https://crates.io/crates/photon-rs
+photon-rs = "0.3.3"
+# protobuf编解码
+# https://crates.io/crates/prost
+prost = "0.13.5"
