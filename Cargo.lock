@@ -2145,6 +2145,7 @@ dependencies = [
  "mail-send",
  "mime",
  "reqwest",
+ "serde_json",
  "simple_logger",
  "tokio",
  "tracing",

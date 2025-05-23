@@ -39,10 +39,10 @@ fn init_log() {
 
     SimpleLogger::new().init().unwrap();
 
-    log::error!("error message");
-    log::error!("error with fmt: {}", 42);
-    log::warn!("warn message");
-    log::info!("info message");
-    log::debug!("debug message");
-    log::trace!("trace message");
+    // log::error!("error message");
+    // log::error!("error with fmt: {}", 42);
+    // log::warn!("warn message");
+    // log::info!("info message");
+    // log::debug!("debug message");
+    // log::trace!("trace message");
 }

@@ -1,7 +1,8 @@
 use crate::utils::now_date_time;
 use axum::http::StatusCode;
-use axum::routing::{get, post};
+use axum::routing::{any, get, post};
 use axum::{Json, Router};
+use std::collections::HashMap;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -11,17 +12,21 @@ use axum::{Json, Router};
 #[allow(dead_code)]
 pub async fn start_serve() {
     // initialize tracing
-    tracing_subscriber::fmt::init();
+    tracing_subscriber::fmt::try_init().ok();
 
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
-        .route("/", get(root))
+        .route("/", any(root))
+        .route("/get", get(root))
+        .route("/post", post(root))
         // `POST /json` goes to `create_user`
         .route("/json", post(post_json));
 
     // run our app with hyper, listening globally on port 9292
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:9292").await.unwrap();
+    let addr = "0.0.0.0:9292";
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    log::info!("listening on {addr}");
     axum::serve(listener, app).await.unwrap();
 }
 
@@ -34,12 +39,15 @@ async fn root() -> String {
 async fn post_json(
     // this argument tells axum to parse the request body
     // as JSON into a `CreateUser` type
-    Json(payload): Json<String>,
-) -> (StatusCode, Json<String>) {
+    Json(payload): Json<HashMap<String, serde_json::Value>>,
+) -> (StatusCode, Json<HashMap<String, serde_json::Value>>) {
     // this will be converted into a JSON response
     // with a status code of `201 Created`
-    (
-        StatusCode::CREATED,
-        Json(format!("{}\n<-{}", payload, now_date_time())),
-    )
+    let mut result: HashMap<String, serde_json::Value> = HashMap::new();
+    result.extend(payload);
+    result.insert(
+        "reply".to_string(),
+        serde_json::Value::String(now_date_time()),
+    );
+    (StatusCode::CREATED, Json(result))
 }

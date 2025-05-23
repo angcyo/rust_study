@@ -83,6 +83,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //test_html2md().await?;
     //test_args();
     //test_send_mail().await;
-    //web::start_serve().await;
+    web::start_serve().await;
     Ok(())
 }
