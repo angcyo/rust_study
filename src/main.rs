@@ -166,8 +166,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     test_utf8();
     test_image();
     
-    //protocol::items::Shirt::try_into();
-    
+    protocol::test_protocol();
     
     Ok(())
 }
