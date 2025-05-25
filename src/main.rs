@@ -9,9 +9,9 @@ mod https;
 mod image;
 mod macros;
 mod mail;
+mod protocol;
 mod utils;
 mod web;
-mod protocol;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
@@ -169,4 +169,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     protocol::test_protocol();
     
     Ok(())
+}
+
+//--
+
+#[cfg(test)]
+mod tests {
+    use crate::ensure_output_dir_exist;
+
+    #[test]
+    fn test_resize_image() {
+        ensure_output_dir_exist();
+        let width = 512;
+        let height = width;
+        let image_path = "tests/logo.png";
+        let output_image_path = format!(".output/logo_{}_{}.png", width, height);
+        crate::image::resize_image_file(image_path, width, height, output_image_path.as_str())
+            .unwrap()
+    }
 }
