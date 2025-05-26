@@ -21,6 +21,24 @@ pub fn resize_image(image: &DynamicImage, width: u32, height: u32) -> DynamicIma
     image.resize(width, height, image::imageops::FilterType::Nearest)
 }
 
+/// 调整图片格式或大小
+pub fn convert_image_format(
+    image: &DynamicImage,
+    format: image::ImageFormat,
+    size: Option<(u32, u32)>,
+) -> anyhow::Result<DynamicImage> {
+    let image: &DynamicImage = if let Some(s) = size {
+        &resize_image(image, s.0, s.1)
+    } else {
+        image
+    };
+
+    let mut buffer = std::io::Cursor::new(Vec::new());
+    image.write_to(&mut buffer, format)?;
+
+    Ok(read_image_bytes(&buffer.into_inner())?)
+}
+
 /// 将图片对象转换成base64字符串数据
 pub fn image_to_base64(img: &DynamicImage) -> anyhow::Result<String> {
     // 直接写入 Vec<u8>
