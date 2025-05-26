@@ -1,6 +1,8 @@
 #![allow(dead_code)]
 
-use base64::engine::general_purpose::STANDARD;
+pub mod file_utils;
+
+use base64::engine::general_purpose::STANDARD_NO_PAD;
 use base64::{DecodeError, Engine};
 use chrono::Utc;
 use rand::distr::uniform::{SampleRange, SampleUniform};
@@ -83,15 +85,17 @@ pub fn string_to_bytes(s: &str) -> Vec<u8> {
 }
 
 /// 将字节数组进行base64加密
+/// [STANDARD]
+/// [STANDARD_NO_PAD]
 
 pub fn base64_encode(bytes: &[u8]) -> String {
-    STANDARD.encode(bytes)
+    STANDARD_NO_PAD.encode(bytes)
 }
 
 /// 将base64的字符串进行解密
 
 pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
-    STANDARD.decode(s)
+    STANDARD_NO_PAD.decode(s)
 }
 
 /// 将字节数组进行md5加密
