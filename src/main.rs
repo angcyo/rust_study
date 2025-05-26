@@ -12,6 +12,7 @@ mod mail;
 mod protocol;
 mod utils;
 mod web;
+mod android;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {

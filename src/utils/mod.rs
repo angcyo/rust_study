@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use base64::engine::general_purpose::STANDARD;
 use base64::{DecodeError, Engine};
 use chrono::Utc;
@@ -10,7 +12,7 @@ use simple_logger::SimpleLogger;
 /// @date 2025/05/22
 ///
 /// 获取当前工作目录
-#[allow(dead_code)]
+
 pub fn get_current_dir() -> String {
     std::env::current_dir()
         .unwrap()
@@ -20,7 +22,6 @@ pub fn get_current_dir() -> String {
 }
 
 /// 获取当前13位毫秒时间戳
-#[allow(dead_code)]
 pub fn now_timestamp() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -29,14 +30,14 @@ pub fn now_timestamp() -> i64 {
 }
 
 /// 获取当前日期的字符串
-#[allow(dead_code)]
+
 pub fn now_date_time() -> String {
     Utc::now().to_string()
 }
 
 /// 生成一个uuid
 /// `03B5916C0B104D619BD43D5148837217`
-#[allow(dead_code)]
+
 pub fn uuid() -> String {
     uuid::Uuid::new_v4()
         .to_string()
@@ -45,7 +46,7 @@ pub fn uuid() -> String {
 }
 
 /// 确保文件对应的文件夹存在
-#[allow(dead_code)]
+
 pub fn ensure_dir_exist(file_path: &str) {
     let dir = std::path::Path::new(file_path).parent().unwrap();
     if !dir.exists() {
@@ -54,7 +55,7 @@ pub fn ensure_dir_exist(file_path: &str) {
 }
 
 /// 取"/"最后一节路径
-#[allow(dead_code)]
+
 pub fn last_path(file_path: &str) -> String {
     file_path.split("/").last().unwrap().to_string()
 }
@@ -62,33 +63,32 @@ pub fn last_path(file_path: &str) -> String {
 //--
 
 /// 将字节数组转换成utf8字符串
-#[allow(dead_code)]
+
 pub fn bytes_to_string(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).to_string()
     //String::from_utf8(bytes.to_vec()).unwrap()
 }
 
 /// 将utf8字符串转换成字节数组
-#[allow(dead_code)]
+
 pub fn string_to_bytes(s: &str) -> Vec<u8> {
     s.as_bytes().to_vec()
 }
 
 /// 将字节数组进行base64加密
-#[allow(dead_code)]
+
 pub fn base64_encode(bytes: &[u8]) -> String {
     STANDARD.encode(bytes)
 }
 
 /// 将base64的字符串进行解密
-#[allow(dead_code)]
+
 pub fn base64_decode(s: &str) -> Result<Vec<u8>, DecodeError> {
     STANDARD.decode(s)
 }
 
 /// 将字节数组进行md5加密
 /// `93E11B05413C8F043BFFCFC5C3D6E68B`
-#[allow(dead_code)]
 pub fn md5_encode(bytes: &[u8]) -> String {
     format!("{:X}", md5::compute(bytes))
 }
@@ -96,7 +96,7 @@ pub fn md5_encode(bytes: &[u8]) -> String {
 //--
 
 /// 随机生成一个浮点数
-#[allow(dead_code)]
+
 pub fn random_f64() -> f64 {
     let mut rng = rand::rng();
     rng.random()
@@ -104,7 +104,7 @@ pub fn random_f64() -> f64 {
 
 /// 在一个范围内随机
 /// `random_range(0..100)`
-#[allow(dead_code)]
+
 pub fn random_range<T, R>(range: R) -> T
 where
     T: SampleUniform,
@@ -117,7 +117,7 @@ where
 //--
 
 /// 初始化工具类
-#[allow(dead_code)]
+
 pub fn init_utils() {
     init_log();
 }

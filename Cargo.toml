@@ -100,3 +100,18 @@ photon-rs = "0.3.3"
 # protobuf编解码
 # https://crates.io/crates/prost
 prost = "0.13.5"
+# 路径处理
+# https://crates.io/crates/pathos
+pathos = "0.3.0"
+# 获取Cargo.toml信息
+# https://crates.io/crates/cargo_metadata
+cargo_metadata = "0.19.2"
+# 终端处理
+# https://crates.io/crates/is-terminal
+is-terminal = "0.4.16"
+#  终端处理
+# https://crates.io/crates/termcolor
+termcolor = "1.4.1"
+# libc
+# https://crates.io/crates/libc
+libc = "0.2.172"
