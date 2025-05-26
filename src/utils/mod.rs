@@ -48,6 +48,13 @@ pub fn uuid() -> String {
 /// 确保文件对应的文件夹存在
 
 pub fn ensure_dir_exist(file_path: &str) {
+    let dir = std::path::Path::new(file_path);
+    if !dir.exists() {
+        std::fs::create_dir_all(dir).unwrap();
+    }
+}
+
+pub fn ensure_parent_dir_exist(file_path: &str) {
     let dir = std::path::Path::new(file_path).parent().unwrap();
     if !dir.exists() {
         std::fs::create_dir_all(dir).unwrap();

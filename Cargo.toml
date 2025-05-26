@@ -115,3 +115,9 @@ termcolor = "1.4.1"
 # libc
 # https://crates.io/crates/libc
 libc = "0.2.172"
+# pdfium
+# https://crates.io/crates/pdfium-render
+# pdfium-render = "0.8.31"
+# pdf2image
+# https://crates.io/crates/pdf2image
+pdf2image = "0.1.3"

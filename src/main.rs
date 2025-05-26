@@ -4,6 +4,7 @@ use colored::Colorize;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 
+mod android;
 mod args;
 mod https;
 mod image;
@@ -12,12 +13,12 @@ mod mail;
 mod protocol;
 mod utils;
 mod web;
-mod android;
+mod pdf;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
     let output = ".output/xxx.out";
-    utils::ensure_dir_exist(output);
+    utils::ensure_parent_dir_exist(output);
 }
 
 #[allow(dead_code)]
@@ -47,7 +48,7 @@ async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     let body = https::get_url_text(url).await?;
 
     // Create output directory
-    utils::ensure_dir_exist(output);
+    utils::ensure_parent_dir_exist(output);
     ptl!("Converting html to markdown...");
     let md = html2md::parse_html(&body);
     std::fs::write(output, md.as_bytes()).unwrap();
