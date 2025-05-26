@@ -53,6 +53,12 @@ pub fn ensure_dir_exist(file_path: &str) {
     }
 }
 
+/// 取"/"最后一节路径
+#[allow(dead_code)]
+pub fn last_path(file_path: &str) -> String {
+    file_path.split("/").last().unwrap().to_string()
+}
+
 //--
 
 /// 将字节数组转换成utf8字符串

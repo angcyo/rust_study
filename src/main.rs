@@ -50,7 +50,7 @@ async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     ptl!("Converting html to markdown...");
     let md = html2md::parse_html(&body);
     std::fs::write(output, md.as_bytes()).unwrap();
-    ptl!("Converted markdown has been saved in {}.", output);
+    ptl!("Converted markdown has been saved in {output}.");
     Ok(())
 }
 
@@ -95,10 +95,8 @@ fn test_utf8() {
     let md5 = utils::md5_encode(bytes.as_slice());
     log::warn!("{}", str);
     ptl!(
-        "{} base64: {} md5: {}",
+        "{} base64: {base64} md5: {md5}",
         utils::bytes_to_string(bytes.as_slice()),
-        base64,
-        md5
     );
     ptl!(
         "{}",
@@ -155,7 +153,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         serde_json::from_value(serde_json::Value::Object(MAP.clone())).unwrap()
     );*/
     MAP.keys().for_each(|k| {
-        log::info!("key:{} value:{}", k, MAP.get(k).unwrap());
+        log::info!("key:{k} value:{}", MAP.get(k).unwrap());
     });
     //serde_json::to_string(MAP.);
     //test_macro();
@@ -165,9 +163,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //web::start_serve().await;
     test_utf8();
     test_image();
-    
+
     protocol::test_protocol();
-    
+
     Ok(())
 }
 
@@ -182,8 +180,11 @@ mod tests {
         ensure_output_dir_exist();
         let width = 512;
         let height = width;
-        let image_path = "tests/logo.png";
-        let output_image_path = format!(".output/logo_{}_{}.png", width, height);
+        let image_path = "tests/FaceQ.png";
+
+        let image_name = crate::utils::last_path(image_path);
+        let output_image_name = format!("{image_name}_{width}_{height}.png");
+        let output_image_path = format!(".output/{output_image_name}");
         crate::image::resize_image_file(image_path, width, height, output_image_path.as_str())
             .unwrap()
     }
