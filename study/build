@@ -7,4 +7,5 @@ set +x
 # stable-aarch64-apple-darwin (default)
 # 输出目录在 ./release
 
-cargo build --release --package rust_study
+#cargo build --release --package study
+cargo build --release

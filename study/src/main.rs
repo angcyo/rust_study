@@ -112,7 +112,7 @@ fn test_image() {
     image::read_image_file("tests/FaceQ.png")
         .unwrap()
         .grayscale() // 灰度处理
-        .save(".output/FaceQ_output.png")
+        .save("../../.output/FaceQ_output.png")
         .unwrap();
 }
 
