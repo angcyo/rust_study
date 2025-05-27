@@ -3,6 +3,14 @@ name = "rust_study"
 version = "0.1.0"
 edition = "2024"
 
+[profile.release]
+#https://github.com/johnthagen/min-sized-rust
+strip = true  # Automatically strip symbols from the binary. 4~mb
+opt-level = "z"  # Optimize for size.
+lto = true  # Perform link-time optimizations.
+codegen-units = 1  # Compile the whole crate at once.
+panic = "unwind"  # Abort on panic. 20~kb
+
 [build-dependencies]
 # Protobuf 编译工具
 # https://crates.io/crates/prost-build
