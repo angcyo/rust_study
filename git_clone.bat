@@ -15,5 +15,5 @@ if exist "%CD%\%folder%\" (
     cd ..
 ) else (
     echo 准备克隆仓库：%folder%
-    git clone "git@github.com:LaserPeckerIst/%folder%.git"
+    git clone "git@github.com:angcyo/%folder%.git"
 )
