@@ -5,3 +5,15 @@ set +x
 
 git fetch
 git rebase origin/main
+
+folder="rust_crates"
+if [ -d "$PWD/$folder" ]; then
+    cd $folder
+    echo "准备拉取仓库：$folder"
+    git fetch
+    git rebase origin/main
+    cd ..
+else
+    echo "准备克隆仓库：$folder"
+    git clone "git@github.com:angcyo/$folder.git"
+fi

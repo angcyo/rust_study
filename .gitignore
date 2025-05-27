@@ -21,3 +21,5 @@ rust-project.json
 
 .idea
 .output
+
+rust_crates

@@ -10,10 +10,10 @@ mod https;
 mod image;
 mod macros;
 mod mail;
+mod pdf;
 mod protocol;
 mod utils;
 mod web;
-mod pdf;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
@@ -175,18 +175,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(test)]
 mod tests {
-    use crate::ensure_output_dir_exist;
+    use crate::utils::get_current_dir;
+    use crate::{ensure_output_dir_exist, ptl};
+
+    /// [study/src/main.rs:183:9]->/Users/angcyo/project/rust/rust_study/study
+    #[test]
+    fn it_works() {
+        ptl!("{}", get_current_dir());
+    }
 
     #[test]
     fn test_resize_image() {
         ensure_output_dir_exist();
         let width = 512;
         let height = width;
-        let image_path = "tests/FaceQ.png";
+        let image_path = "../tests/FaceQ.png";
 
         let image_name = crate::utils::last_path(image_path);
         let output_image_name = format!("{image_name}_{width}_{height}.png");
-        let output_image_path = format!(".output/{output_image_name}");
+        let output_image_path = format!("../.output/{output_image_name}");
         crate::image::resize_image_file(image_path, width, height, output_image_path.as_str())
             .unwrap()
     }
