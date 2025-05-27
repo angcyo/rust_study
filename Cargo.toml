@@ -2,7 +2,13 @@
 edition = "2024"
 resolver = "3"
 members = [
-    "study"
+    "study",
+    "rust_crates/rc_basis",
+    "rust_crates/rc_command",
+    "rust_crates/rc_image",
+    "rust_crates/rc_log",
+    "create_placeholder_image",
+
 ]
 
 [profile.release]

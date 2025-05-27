@@ -357,6 +357,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1628fb46dfa0b37568d12e5edd512553eccf6a22a78e8bde00bb4aed84d5bdbf"
 
 [[package]]
+name = "by_address"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64fa3c856b712db6612c019f14756e64e4bcea13337a6b33b696333a9eaa2d06"
+
+[[package]]
 name = "bytemuck"
 version = "1.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -671,6 +677,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "create_placeholder_image"
+version = "0.1.0"
+dependencies = [
+ "palette 0.7.6",
+ "rc_basis",
+ "rc_command",
+ "rc_image",
+ "rusttype",
+]
+
+[[package]]
 name = "critical-section"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -954,6 +971,12 @@ dependencies = [
  "smallvec",
  "zune-inflate",
 ]
+
+[[package]]
+name = "fast-srgb8"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd2e7510819d6fbf51a5545c8f922716ecfb14df168a3242f7d33e0239efe6a1"
 
 [[package]]
 name = "fastrand"
@@ -2562,7 +2585,19 @@ checksum = "8f9cd68f7112581033f157e56c77ac4a5538ec5836a2e39284e65bd7d7275e49"
 dependencies = [
  "approx",
  "num-traits",
- "palette_derive",
+ "palette_derive 0.6.1",
+ "phf",
+]
+
+[[package]]
+name = "palette"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cbf71184cc5ecc2e4e1baccdb21026c20e5fc3dcf63028a086131b3ab00b6e6"
+dependencies = [
+ "approx",
+ "fast-srgb8",
+ "palette_derive 0.7.6",
  "phf",
 ]
 
@@ -2576,6 +2611,18 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "palette_derive"
+version = "0.7.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f5030daf005bface118c096f510ffb781fc28f9ab6a32ab224d8631be6851d30"
+dependencies = [
+ "by_address",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.101",
 ]
 
 [[package]]
@@ -2743,7 +2790,7 @@ dependencies = [
  "instant",
  "js-sys",
  "node-sys",
- "palette",
+ "palette 0.6.1",
  "perlin2d",
  "rand 0.7.3",
  "rusttype",
@@ -3179,6 +3226,48 @@ checksum = "1465873a3dfdaa8ae7cb14b4383657caab0b3e8a0aa9ae8e04b044854c8dfce2"
 dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "rc_basis"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "base64 0.22.1",
+ "bytes",
+ "chrono",
+ "md5",
+ "rand 0.9.1",
+ "uuid",
+]
+
+[[package]]
+name = "rc_command"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "clap_builder",
+]
+
+[[package]]
+name = "rc_image"
+version = "0.1.0"
+dependencies = [
+ "image 0.25.6",
+ "imageproc 0.25.0",
+ "rc_basis",
+]
+
+[[package]]
+name = "rc_log"
+version = "0.1.0"
+dependencies = [
+ "colog",
+ "env_logger",
+ "log",
+ "simple_logger",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -3711,43 +3800,30 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 name = "study"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "axum",
- "base64 0.22.1",
- "bytes",
  "cargo_metadata",
- "chrono",
- "clap",
- "colog",
  "colored 3.0.0",
- "env_logger",
  "html2md",
- "image 0.25.6",
- "imageproc 0.25.0",
  "is-terminal",
  "jsonxf",
  "lazy_static",
  "lettre",
  "libc",
- "log",
  "lru",
  "mail-send",
- "md5",
  "mime",
  "pathos",
  "pdf2image",
  "photon-rs",
  "prost",
  "prost-build",
- "rand 0.9.1",
+ "rc_basis",
+ "rc_image",
+ "rc_log",
  "reqwest",
  "serde_json",
- "simple_logger",
  "termcolor",
  "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
 ]
 
 [[package]]

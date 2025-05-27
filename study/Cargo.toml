@@ -9,6 +9,10 @@ edition = "2024"
 prost-build = "0.13.5"
 
 [dependencies]
+rc_basis = { path = "../rust_crates/rc_basis" }
+rc_image = { path = "../rust_crates/rc_image" }
+rc_log = { path = "../rust_crates/rc_log" }
+
 # HTTP 客户端
 # https://crates.io/crates/reqwest
 reqwest = { version = "0.12.15", features = ["json"] }
@@ -17,12 +21,6 @@ reqwest = { version = "0.12.15", features = ["json"] }
 tokio = { version = "1.45.0", features = ["full"] }
 # https://crates.io/crates/html2md
 html2md = "0.2.15"
-# 错误处理
-# https://crates.io/crates/anyhow
-anyhow = "1.0.98"
-# 命令行解析
-# https://crates.io/crates/clap
-clap = { version = "4.5.38", features = ["derive"] }
 # 命令终端多彩显示
 # https://crates.io/crates/colored
 colored = "3.0.0"
@@ -41,53 +39,15 @@ mail-send = "0.5.1"
 # 邮件发送
 # https://crates.io/crates/lettre
 lettre = "0.11.16"
-# 时间处理
-# https://crates.io/crates/chrono
-chrono = "0.4.41"
+
 # web 框架
 # https://crates.io/crates/axum
 axum = "0.8.4"
-# 日志处理
-# https://crates.io/crates/tracing
-tracing = "0.1.41"
-# https://crates.io/crates/tracing-subscriber
-tracing-subscriber = "0.3.19"
-# 日志处理
-# https://crates.io/crates/log
-log = "0.4.27"
-# 日志处理
-# https://crates.io/crates/env_logger
-env_logger = "0.11.8"
-# 日志处理
-# https://crates.io/crates/colog
-colog = "1.3.0"
-# 日志处理
-# https://crates.io/crates/simple_logger
-simple_logger = "5.0.0"
+
 # json序列化
 # https://crates.io/crates/serde_json
 serde_json = "1.0.140"
-# base64
-# https://crates.io/crates/base64
-base64 = "0.22.1"
-# md5
-# https://crates.io/crates/md5
-md5 = "0.7.0"
-# uuid
-# https://crates.io/crates/uuid
-uuid = "1.17.0"
-# 随机数
-# https://crates.io/crates/rand
-rand = "0.9.1"
-# 字节处理
-# https://crates.io/crates/bytes
-bytes = "1.10.1"
-# 图片处理
-# https://crates.io/crates/image
-image = "0.25.6"
-# 图片处理
-# https://crates.io/crates/imageproc
-imageproc = "0.25.0"
+
 # 懒加载
 # https://crates.io/crates/lazy_static
 lazy_static = "1.5.0"

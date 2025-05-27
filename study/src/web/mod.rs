@@ -1,7 +1,7 @@
-use crate::utils::now_date_time;
 use axum::http::StatusCode;
 use axum::routing::{any, get, post};
 use axum::{Json, Router};
+use rc_basis::now_date_time;
 use std::collections::HashMap;
 
 ///
@@ -12,7 +12,7 @@ use std::collections::HashMap;
 #[allow(dead_code)]
 pub async fn start_serve() {
     // initialize tracing
-    tracing_subscriber::fmt::try_init().ok();
+    rc_log::tracing_subscriber::fmt::try_init().ok();
 
     // build our application with a route
     let app = Router::new()
@@ -26,7 +26,7 @@ pub async fn start_serve() {
     // run our app with hyper, listening globally on port 9292
     let addr = "0.0.0.0:9292";
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
-    log::info!("listening on {addr}");
+    rc_log::log::info!("listening on {addr}");
     axum::serve(listener, app).await.unwrap();
 }
 

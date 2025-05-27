@@ -1,4 +1,4 @@
-use pdf2image::{RenderOptionsBuilder, PDF};
+use pdf2image::{image, RenderOptionsBuilder, PDF};
 //use pdfium_render::prelude::{PdfRenderConfig, Pdfium, PdfiumError};
 
 ///
@@ -7,7 +7,7 @@ use pdf2image::{RenderOptionsBuilder, PDF};
 ///
 
 /// `pdfium_render` 将pdf文件, 转换成图片保存
-/*fn export_pdf_to_jpegs(pdf_path: &str, output_path: &str) -> anyhow::Result<()> {
+/*fn export_pdf_to_jpegs(pdf_path: &str, output_path: &str) -> rc_basis::anyhow::Result<()> {
     crate::utils::ensure_dir_exist(output_path);
 
     // Renders each page in the PDF file at the given path to a separate JPEG file.
@@ -45,9 +45,9 @@ use pdf2image::{RenderOptionsBuilder, PDF};
 }*/
 
 /// `pdf2image` 将pdf文件, 转换成图片保存
-fn export_pdf_to_jpegs(pdf_path: &str, output_path: &str) -> anyhow::Result<()> {
-    crate::utils::ensure_dir_exist(output_path);
-    
+fn export_pdf_to_jpegs(pdf_path: &str, output_path: &str) -> rc_basis::anyhow::Result<()> {
+    rc_basis::files::ensure_dir_exist(output_path);
+
     let pdf = PDF::from_file(pdf_path)?;
     let pages = pdf.render(
         pdf2image::Pages::Range(1..=8),

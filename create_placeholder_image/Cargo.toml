@@ -1,0 +1,16 @@
+[package]
+name = "create_placeholder_image"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rc_basis = { path = "../rust_crates/rc_basis" }
+rc_command = { path = "../rust_crates/rc_command" }
+rc_image = { path = "../rust_crates/rc_image" }
+
+# palette 颜色处理
+# https://crates.io/crates/palette
+palette = "0.7.6"
+# 字体
+# https://crates.io/crates/rusttype
+rusttype = "0.9.3"

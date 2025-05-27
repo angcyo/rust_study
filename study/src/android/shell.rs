@@ -137,7 +137,7 @@ impl Shell {
         message: Option<&dyn fmt::Display>,
         color: Color,
         justified: bool,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         match self.verbosity {
             Verbosity::Quiet => Ok(()),
             _ => {
@@ -203,7 +203,7 @@ impl Shell {
     }
 
     /// Shortcut to right-align and color green a status message.
-    pub fn status<T, U>(&mut self, status: T, message: U) -> anyhow::Result<()>
+    pub fn status<T, U>(&mut self, status: T, message: U) -> rc_basis::anyhow::Result<()>
     where
         T: fmt::Display,
         U: fmt::Display,
@@ -211,7 +211,7 @@ impl Shell {
         self.print(&status, Some(&message), Green, true)
     }
 
-    pub fn status_header<T>(&mut self, status: T) -> anyhow::Result<()>
+    pub fn status_header<T>(&mut self, status: T) -> rc_basis::anyhow::Result<()>
     where
         T: fmt::Display,
     {
@@ -224,7 +224,7 @@ impl Shell {
         status: T,
         message: U,
         color: Color,
-    ) -> anyhow::Result<()>
+    ) -> rc_basis::anyhow::Result<()>
     where
         T: fmt::Display,
         U: fmt::Display,
@@ -233,9 +233,9 @@ impl Shell {
     }
 
     /// Runs the callback only if we are in very verbose mode.
-    pub fn very_verbose<F>(&mut self, mut callback: F) -> anyhow::Result<()>
+    pub fn very_verbose<F>(&mut self, mut callback: F) -> rc_basis::anyhow::Result<()>
     where
-        F: FnMut(&mut Shell) -> anyhow::Result<()>,
+        F: FnMut(&mut Shell) -> rc_basis::anyhow::Result<()>,
     {
         match self.verbosity {
             Verbosity::VeryVerbose => callback(self),
@@ -244,9 +244,9 @@ impl Shell {
     }
 
     /// Runs the callback only if we are in verbose mode.
-    pub fn verbose<F>(&mut self, mut callback: F) -> anyhow::Result<()>
+    pub fn verbose<F>(&mut self, mut callback: F) -> rc_basis::anyhow::Result<()>
     where
-        F: FnMut(&mut Shell) -> anyhow::Result<()>,
+        F: FnMut(&mut Shell) -> rc_basis::anyhow::Result<()>,
     {
         match self.verbosity {
             Verbosity::Verbose | Verbosity::VeryVerbose => callback(self),
@@ -255,9 +255,9 @@ impl Shell {
     }
 
     /// Runs the callback if we are not in verbose mode.
-    pub fn concise<F>(&mut self, mut callback: F) -> anyhow::Result<()>
+    pub fn concise<F>(&mut self, mut callback: F) -> rc_basis::anyhow::Result<()>
     where
-        F: FnMut(&mut Shell) -> anyhow::Result<()>,
+        F: FnMut(&mut Shell) -> rc_basis::anyhow::Result<()>,
     {
         match self.verbosity {
             Verbosity::Verbose | Verbosity::VeryVerbose => Ok(()),
@@ -266,7 +266,7 @@ impl Shell {
     }
 
     /// Prints a red 'error' message.
-    pub fn error<T: fmt::Display>(&mut self, message: T) -> anyhow::Result<()> {
+    pub fn error<T: fmt::Display>(&mut self, message: T) -> rc_basis::anyhow::Result<()> {
         if self.needs_clear {
             self.err_erase_line();
         }
@@ -275,7 +275,7 @@ impl Shell {
     }
 
     /// Prints an amber 'warning' message.
-    pub fn warn<T: fmt::Display>(&mut self, message: T) -> anyhow::Result<()> {
+    pub fn warn<T: fmt::Display>(&mut self, message: T) -> rc_basis::anyhow::Result<()> {
         match self.verbosity {
             Verbosity::Quiet => Ok(()),
             _ => self.print(&"warning", Some(&message), Yellow, false),
@@ -283,7 +283,7 @@ impl Shell {
     }
 
     /// Prints a cyan 'note' message.
-    pub fn note<T: fmt::Display>(&mut self, message: T) -> anyhow::Result<()> {
+    pub fn note<T: fmt::Display>(&mut self, message: T) -> rc_basis::anyhow::Result<()> {
         self.print(&"note", Some(&message), Cyan, false)
     }
 
@@ -298,7 +298,7 @@ impl Shell {
     }
 
     /// Updates the color choice (always, never, or auto) from a string..
-    pub fn set_color_choice(&mut self, color: Option<&str>) -> anyhow::Result<()> {
+    pub fn set_color_choice(&mut self, color: Option<&str>) -> rc_basis::anyhow::Result<()> {
         if let ShellOut::Stream {
             ref mut stdout,
             ref mut stderr,
@@ -312,7 +312,7 @@ impl Shell {
 
                 Some("auto") | None => ColorChoice::CargoAuto,
 
-                Some(arg) => anyhow::bail!(
+                Some(arg) => rc_basis::anyhow::bail!(
                     "argument for --color must be auto, always, or \
                      never, but found `{}`",
                     arg
@@ -358,7 +358,7 @@ impl Shell {
         &mut self,
         fragment: impl fmt::Display,
         color: &ColorSpec,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         self.output.write_stdout(fragment, color)
     }
 
@@ -369,12 +369,12 @@ impl Shell {
         &mut self,
         fragment: impl fmt::Display,
         color: &ColorSpec,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         self.output.write_stderr(fragment, color)
     }
 
     /// Prints a message to stderr and translates ANSI escape code into console colors.
-    pub fn print_ansi_stderr(&mut self, message: &[u8]) -> anyhow::Result<()> {
+    pub fn print_ansi_stderr(&mut self, message: &[u8]) -> rc_basis::anyhow::Result<()> {
         if self.needs_clear {
             self.err_erase_line();
         }
@@ -390,7 +390,7 @@ impl Shell {
     }
 
     /// Prints a message to stdout and translates ANSI escape code into console colors.
-    pub fn print_ansi_stdout(&mut self, message: &[u8]) -> anyhow::Result<()> {
+    pub fn print_ansi_stdout(&mut self, message: &[u8]) -> rc_basis::anyhow::Result<()> {
         if self.needs_clear {
             self.err_erase_line();
         }
@@ -422,7 +422,7 @@ impl ShellOut {
         message: Option<&dyn fmt::Display>,
         color: Color,
         justified: bool,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         match *self {
             ShellOut::Stream { ref mut stderr, .. } => {
                 stderr.reset()?;
@@ -476,7 +476,7 @@ impl ShellOut {
         &mut self,
         fragment: impl fmt::Display,
         color: &ColorSpec,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         match *self {
             ShellOut::Stream { ref mut stdout, .. } => {
                 stdout.reset()?;
@@ -496,7 +496,7 @@ impl ShellOut {
         &mut self,
         fragment: impl fmt::Display,
         color: &ColorSpec,
-    ) -> anyhow::Result<()> {
+    ) -> rc_basis::anyhow::Result<()> {
         match *self {
             ShellOut::Stream { ref mut stderr, .. } => {
                 stderr.reset()?;

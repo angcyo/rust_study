@@ -1,4 +1,5 @@
 use prost::Message;
+use rc_basis::bytes::base64_encode;
 
 ///
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
@@ -18,7 +19,7 @@ pub fn test_protocol() {
     // let mut buf = vec![];
     shirt.encode(&mut buf).unwrap();
 
-    crate::ptl!("Encoded shirt: {:?}", crate::utils::base64_encode(&buf));
+    crate::ptl!("Encoded shirt: {:?}", base64_encode(&buf));
 
     // 从字节数组反序列化为 Shirt 实例
     let decoded_shirt = shirt::Shirt::decode(&buf[..]).unwrap();
