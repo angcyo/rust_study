@@ -9,3 +9,5 @@ set +x
 
 #cargo build --release --package study
 cargo build --release
+
+rustup show active-toolchain

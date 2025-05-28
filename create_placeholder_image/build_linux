@@ -10,3 +10,5 @@ set +x
 #cargo build --release --package study
 cargo build --release --target x86_64-unknown-linux-gnu --package create_placeholder_image
 #cargo build --release --target x86_64-unknown-linux-musl --package create_placeholder_image
+
+rustup show active-toolchain
