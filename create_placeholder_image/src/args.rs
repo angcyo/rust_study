@@ -26,6 +26,10 @@ pub(crate) struct Args {
     #[arg(long, default_value_t = 100)]
     pub height: u32,
 
+    /// 输入图片路径, 则可以对应输出指定大小的图片数据
+    #[arg(short, long)]
+    pub input: Option<String>,
+
     /// 输出文件路径, 不指定则输出base64数据到控制台
     #[arg(short, long)]
     pub output: Option<String>,

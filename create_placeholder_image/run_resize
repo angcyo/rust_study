@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+cargo run --package create_placeholder_image --bin create_placeholder_image -- -h
+#cargo run --package create_placeholder_image --bin create_placeholder_image -- -V
+#cargo run --package create_placeholder_image --bin create_placeholder_image -- -i ".output/1000_1000.png" -o ".output/image.png"

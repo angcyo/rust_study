@@ -1,14 +1,10 @@
 use palette::Srgba;
 use rc_basis::colors::RgbaColor;
-use rc_basis::num::min_f32;
-use rc_basis::ptl;
 use rc_command::clap_builder::Parser;
 use rc_image::image;
 use rc_image::image::{EncodableLayout, Rgba};
 use rusttype::{point, Font, Scale};
 use std::cmp::{max, min};
-use std::fmt::format;
-use std::fs::File;
 use std::io::Read;
 use std::str::FromStr;
 
@@ -45,6 +41,35 @@ fn main() {
     );
     let width = args.width;
     let height = args.height;
+
+    match args.input {
+        Some(input) => resize_image(input, width, height, args.output),
+        None => create_image(color, width, height, text_color, args.output),
+    }
+
+    //rc_image::convert::resize_image()
+}
+
+//--
+
+/// 调整图片大小
+fn resize_image(input: String, width: u32, height: u32, output: Option<String>) {
+    let img = rc_image::read::read_image_file(&input).unwrap();
+    let img = rc_image::convert::resize_image(&img, width, height);
+
+    if let Some(output) = output {
+        rc_basis::files::ensure_parent_dir_exist(&output);
+        rc_image::write::save_image(&img, &output, None).unwrap();
+    } else {
+        println!(
+            "data:image/png;base64,{}",
+            rc_image::convert::image_to_base64(&img).unwrap()
+        );
+    }
+}
+
+/// 创建占位图
+fn create_image(color: u32, width: u32, height: u32, text_color: u32, output: Option<String>) {
     let mut img = rc_image::write::create_image(width, height, color);
 
     // 加载字体
@@ -115,7 +140,7 @@ fn main() {
         }
     }
 
-    if let Some(output) = args.output {
+    if let Some(output) = output {
         rc_basis::files::ensure_parent_dir_exist(&output);
         img.save_with_format(output, image::ImageFormat::Png)
             .unwrap();
