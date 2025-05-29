@@ -7,8 +7,10 @@ members = [
     "rust_crates/rc_command",
     "rust_crates/rc_image",
     "rust_crates/rc_log",
+    "rust_crates/rc_macro",
     "create_placeholder_image",
     "empty",
+    "macro_demo",
 ]
 
 [profile.release]
