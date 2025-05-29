@@ -3284,6 +3284,7 @@ dependencies = [
  "chrono",
  "md5",
  "rand 0.9.1",
+ "regex",
  "uuid",
 ]
 
