@@ -15,7 +15,7 @@ mod args;
 /// @date 2025/05/27
 ///
 
-const FONT_DATA: &[u8] = include_bytes!("assets/SourceHanSansCN-Normal.otf");
+const FONT_DATA: &[u8] = include_bytes!("assets/Roboto-Regular.ttf");
 
 fn main() {
     let args = args::Args::parse();

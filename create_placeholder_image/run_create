@@ -8,5 +8,5 @@ set +x
 #cargo run --package create_placeholder_image --bin create_placeholder_image -- --color "#ff0000ff" --width 100 --height 100 -o ".output/100_100.png"
 #cargo run --package create_placeholder_image --bin create_placeholder_image -- --color "#ff0000ff" --width 1000 --height 1000 -o ".output/1000_1000.png"
 #cargo run --package create_placeholder_image --bin create_placeholder_image -- --color "#ff00ffff" --text-color "#ffffffff" --width 600 --height 200 -o ".output/600_200.png"
-#cargo run --package create_placeholder_image --bin create_placeholder_image -- --text-color "#ffffffff" --width 600 --height 200 -o ".output/600_200.png"
-cargo run --package create_placeholder_image --bin create_placeholder_image -- -o ".output/image.png"
+cargo run --package create_placeholder_image --bin create_placeholder_image -- --text-color "#ffffffff" --width 600 --height 200 -o ".output/600_200.png"
+#cargo run --package create_placeholder_image --bin create_placeholder_image -- -o ".output/image.png"
