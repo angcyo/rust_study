@@ -4,9 +4,12 @@
 ///
 
 fn main() -> std::io::Result<()> {
-    prost_build::Config::new()
-        .out_dir("src/protocol")
-        .compile_protos(&["src/protocol/shirt.proto"], &["src/"])?;
-    //prost_build::compile_protos(&["src/protocol/items.proto"], &["src/"])?;
+    #[cfg(feature = "enable_proto")]
+    {
+        prost_build::Config::new()
+            .out_dir("src/protocol")
+            .compile_protos(&["src/protocol/shirt.proto"], &["src/"])?;
+        //prost_build::compile_protos(&["src/protocol/items.proto"], &["src/"])?;
+    }
     Ok(())
 }

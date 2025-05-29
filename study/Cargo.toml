@@ -3,6 +3,10 @@ name = "study"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+# 是否激活protobuf编解码功能
+enable_proto = []
+
 [build-dependencies]
 # Protobuf 编译工具
 # https://crates.io/crates/prost-build
