@@ -4,5 +4,5 @@
 set +x
 
 git add .
-git commit -a -m "+ image resize"
+git commit -a -m "+ test"
 git push origin main
