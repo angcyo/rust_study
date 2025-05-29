@@ -12,4 +12,4 @@ rem cargo build --release --target x86_64-unknown-linux-musl --package create_pl
 
 rustup show active-toolchain
 
-cmd /C start ../target/release
+cmd /C start ..\target\release
