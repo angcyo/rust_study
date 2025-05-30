@@ -6,7 +6,7 @@ use rc_macro::{
 /// @author <a href="mailto:angcyo@126.com">angcyo</a>
 /// @date 2025/05/29
 ///
-
+#[print_attribute_token_stream]
 fn main() {
     let a = MacroStruct {
         name: "angcyo".to_string(),
@@ -18,6 +18,7 @@ fn main() {
 }
 
 #[derive(Debug, DerivePrintToken, DerivePrintTokenAttr)]
+#[print_attribute_token_stream]
 pub struct MacroStruct {
     #[DeriveAttr]
     name: String,
