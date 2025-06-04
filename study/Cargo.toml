@@ -93,3 +93,7 @@ libc = "0.2.172"
 # pdf2image
 # https://crates.io/crates/pdf2image
 pdf2image = "0.1.3"
+
+# A pure Rust library for generating SVG badges with an included binary
+# https://crates.io/crates/badges
+badges = "0.3.2"

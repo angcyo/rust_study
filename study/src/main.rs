@@ -9,6 +9,7 @@ mod mail;
 mod pdf;
 mod protocol;
 mod web;
+mod badges;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
