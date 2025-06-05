@@ -6,6 +6,8 @@
 mod tests {
     use std::thread;
 
+    /// Main thread name: "threads::tests::test_thread"
+    /// Current thread name: "MyThread"
     #[test]
     fn test_thread() {
         // 创建一个新的线程并为其设置名称
