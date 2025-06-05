@@ -10,6 +10,7 @@ mod pdf;
 mod protocol;
 mod web;
 mod badges;
+mod threads;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
