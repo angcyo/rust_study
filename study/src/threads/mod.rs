@@ -16,15 +16,22 @@ mod tests {
             .spawn(move || {
                 // 获取并打印当前线程名称
                 let current_thread = thread::current();
-                println!("Current thread name: {:?}", current_thread.name().unwrap_or(""));
+                println!("Current thread name: {:?}", current_thread.name());
             })
             .unwrap();
 
+        let handle2 = thread::spawn(move || {
+            // 获取并打印当前线程名称
+            let current_thread = thread::current();
+            println!("Current thread name2: {:?}", current_thread.name());
+        });
+
         // 在主线程中获取当前线程名称
         let main_thread = thread::current();
-        println!("Main thread name: {:?}", main_thread.name().unwrap_or(""));
+        println!("Main thread name: {:?}", main_thread.name());
 
         // 等待子线程完成
         handle.join().unwrap();
+        handle2.join().unwrap();
     }
 }
