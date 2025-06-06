@@ -8,6 +8,7 @@ set +x
 # 输出目录在 ./release
 
 #cargo build --release --package study
+#cargo build --release --target-dir "../.output"
 cargo build --release
 
 rustup show active-toolchain
