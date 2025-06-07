@@ -6,7 +6,6 @@ use std::sync::Mutex;
 
 mod android;
 mod badges;
-mod https;
 mod mail;
 mod pdf;
 mod protocol;
@@ -43,7 +42,7 @@ async fn test_html2md() -> Result<(), Box<dyn std::error::Error>> {
     let output = ".output/rust.md";
 
     ptl!("Request {}", url);
-    let body = https::get_url_text(url).await?;
+    let body = rc_http::http::get_url_text(url).await?;
 
     // Create output directory
     rc_basis::files::ensure_parent_dir_exist(output);

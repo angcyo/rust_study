@@ -16,6 +16,7 @@ prost-build = "0.13.5"
 rc_basis = { path = "../rust_crates/rc_basis" }
 rc_image = { path = "../rust_crates/rc_image" }
 rc_log = { path = "../rust_crates/rc_log" }
+rc_http = { path = "../rust_crates/rc_http" }
 
 # HTTP 客户端
 # https://crates.io/crates/reqwest
