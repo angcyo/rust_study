@@ -11,6 +11,7 @@ mod pdf;
 mod protocol;
 mod threads;
 mod web;
+mod files;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
