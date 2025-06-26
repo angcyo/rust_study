@@ -11,6 +11,7 @@ members = [
     "create_placeholder_image",
     "empty",
     "macro_demo",
+    "cdylib_demo",
 ]
 
 [profile.release]

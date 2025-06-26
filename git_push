@@ -4,5 +4,5 @@
 set +x
 
 git add .
-git commit -a -m "* fix base"
+git commit -a -m "+ dylib demo"
 git push origin

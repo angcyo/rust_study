@@ -1,0 +1,17 @@
+[package]
+name = "cdylib_demo"
+version = "0.1.0"
+edition = "2024"
+
+[lib] #https://doc.rust-lang.org/cargo/reference/cargo-targets.html#library
+#name = "cdylib_demo"
+crate-type = ["cdylib", "staticlib"] #https://doc.rust-lang.org/reference/linkage.html
+
+[dependencies]
+# https://crates.io/crates/safer-ffi
+safer-ffi = "0.1.13"
+
+[features]
+# If you want to generate the headers, use a feature-gate
+# to opt into doing so:
+headers = ["safer-ffi/headers"]
