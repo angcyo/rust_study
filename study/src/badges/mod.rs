@@ -7,6 +7,7 @@ mod tests {
     use badges::{BadgeBuilder, BadgeColor, BadgeStyle};
     use rc_basis::files::{open_file_with_sys, save_string_to_file};
 
+    /// 生成.svg格式化的徽章
     #[test]
     fn test_badges() {
         let style = BadgeStyle::Flat; //带圆角的扁平
