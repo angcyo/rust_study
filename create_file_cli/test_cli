@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+#cargo run --package create_file_cli --bin create_file_cli -- --help
+#cargo run --package create_file_cli --bin create_file_cli -- -s 1024
+#cargo run --package create_file_cli --bin create_file_cli -- -s 100 -o ./test.txt
+cargo run --package create_file_cli --bin create_file_cli -- -s 1000 -i ./test.gcode -o ./output.gcode

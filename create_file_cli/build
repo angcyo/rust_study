@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+# 使用默认平台编译 `rustup show active-toolchain`
+# stable-x86_64-unknown-linux-gnu (default)
+# 输出目录在 ./release
+
+cargo build --release --package create_file_cli
+#cargo build --release --target x86_64-unknown-linux-gnu --package create_placeholder_image
+#cargo build --release --target x86_64-unknown-linux-musl --package create_placeholder_image
+
+rustup show active-toolchain
+
+open ../target/release

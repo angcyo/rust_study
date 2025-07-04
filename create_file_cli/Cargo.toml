@@ -1,0 +1,11 @@
+[package]
+name = "create_file_cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 命令行解析
+# https://crates.io/crates/clap
+clap = { version = "4.5.38", features = ["derive"] }
+# https://crates.io/crates/clap_builder
+clap_builder = "4.5.38"

@@ -12,6 +12,7 @@ members = [
     "empty",
     "macro_demo",
     "cdylib_demo",
+    "create_file_cli",
 ]
 
 [profile.release]
