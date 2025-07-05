@@ -5,5 +5,5 @@ set +x
 
 git remote -v
 git add .
-git commit -a -m "+ nalgebra test"
+git commit -a -m "* fix test"
 git push origin

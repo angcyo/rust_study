@@ -140,6 +140,29 @@ fn perspective_transform_point2(mat: &[[f64; 3]; 3], pt: (f64, f64)) -> (f64, f6
 #[cfg(test)]
 mod tests {
     use crate::nalgebra::{get_perspective_transform, get_perspective_transform2};
+    use nalgebra::Matrix3;
+
+    #[test]
+    fn test_matrix3() {
+        //创建一个单位矩阵
+        let mat = Matrix3::<f64>::identity();
+
+        //可视化输出
+        // ┌       ┐
+        // │ 1 0 0 │
+        // │ 0 1 0 │
+        // │ 0 0 1 │
+        // └       ┘
+        println!("{}", mat);
+
+        //内存数组排列
+        //[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        println!("{:?}", mat);
+
+        //内存数组排列
+        //[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        println!("{:?}", mat.data.as_slice());
+    }
 
     #[test]
     fn test_perspective_transform() {
