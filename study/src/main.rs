@@ -12,6 +12,7 @@ mod protocol;
 mod threads;
 mod web;
 mod files;
+mod nalgebra;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {

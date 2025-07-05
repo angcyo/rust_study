@@ -5,5 +5,5 @@ set +x
 
 git remote -v
 git add .
-git commit -a -m "+ create file cli"
+git commit -a -m "+ nalgebra test"
 git push origin
