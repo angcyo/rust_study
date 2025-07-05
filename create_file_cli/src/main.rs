@@ -41,9 +41,10 @@ fn write_file_fill_data(fill_data: Vec<u8>, size: u64, output: &str) {
     //已写入的字节大小
     let mut write_count = 0;
 
+    let error = format!("写入数据失败: {}", output);
+    let error_ref = error.as_str();
     while write_count < size {
-        file.write_all(&fill_data)
-            .expect(format!("写入数据失败: {}", output).as_str());
+        file.write_all(&fill_data).expect(error_ref);
         write_count += fill_data.len() as u64;
     }
 }
