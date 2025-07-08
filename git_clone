@@ -9,11 +9,13 @@ git rebase origin/main
 
 folder="rust_crates"
 if [ -d "$PWD/$folder" ]; then
+    # shellcheck disable=SC2164
     cd $folder
     echo "准备拉取仓库：$folder"
     git remote -v
     git fetch
     git rebase origin/main
+    # shellcheck disable=SC2103
     cd ..
 else
     echo "准备克隆仓库：$folder"
