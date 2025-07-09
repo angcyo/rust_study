@@ -140,7 +140,7 @@ fn perspective_transform_point2(mat: &[[f64; 3]; 3], pt: (f64, f64)) -> (f64, f6
 #[cfg(test)]
 mod tests {
     use crate::nalgebra::{get_perspective_transform, get_perspective_transform2};
-    use nalgebra::Matrix3;
+    use nalgebra::{Matrix3, Point, Point2};
 
     #[test]
     fn test_matrix3() {
@@ -190,6 +190,11 @@ mod tests {
         // 8.176286297216732, 8.216367882118266, 1.0]
         let data = result.data.as_slice();
         println!("{:?}", data);
+
+        //使用矩阵映射一个点
+        let pt = Point2::new(90.0, 90.0);
+        let pt2 = result.transform_point(&pt);
+        println!("{:?}", pt2);
     }
 
     #[test]
