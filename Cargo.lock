@@ -650,6 +650,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f46ad14479a25103f283c0f10005961cf086d8dc42205bb44c46ac563475dca6"
 
 [[package]]
+name = "clipper-sys"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b5141c32419064aef7322f754b92fd4ea53c360c1ad984ec38b58af533eba3ac"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "colog"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1379,12 +1388,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "geo-clipper"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2370335cc0c40c7bc1e5b0ead27bdbb2132d54cfbb96248a4bdd65db1a6873aa"
+dependencies = [
+ "clipper-sys",
+ "geo-types 0.7.16",
+]
+
+[[package]]
 name = "geo-normalized2"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "52f6f205d4dbed153e6382209f7b1288d6936062a56e47f1d60e2d141bec4b0a"
 dependencies = [
  "geo",
+ "num-traits",
+]
+
+[[package]]
+name = "geo-offset"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d74cc1ae801176d4cfee3f4be7dd8758aa5e3c6155bf7d1fd8b5db3546eb7fe4"
+dependencies = [
+ "geo-clipper",
+ "geo-types 0.7.16",
+ "itertools 0.14.0",
  "num-traits",
 ]
 
@@ -4540,6 +4571,7 @@ dependencies = [
  "colored 3.0.0",
  "fwdansi",
  "geo",
+ "geo-offset",
  "geo-svg-io2",
  "html2md",
  "is-terminal",

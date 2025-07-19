@@ -110,3 +110,5 @@ geo = "0.30.0"
 # Functionality to convert between SVG and geo-types
 # https://crates.io/crates/geo-svg-io2
 geo-svg-io2 = "0.2.0"
+# https://crates.io/crates/geo-offset
+geo-offset = "0.4.0"
