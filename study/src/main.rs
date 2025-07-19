@@ -13,6 +13,8 @@ mod threads;
 mod web;
 mod files;
 mod nalgebra;
+mod geo;
+mod test;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {

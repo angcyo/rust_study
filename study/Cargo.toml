@@ -103,3 +103,10 @@ badges = "0.3.2"
 # 线性代数库, 透视变换
 # https://crates.io/crates/nalgebra
 nalgebra = "0.33.2"
+
+# Geospatial primitives and algorithms
+# https://crates.io/crates/geo
+geo = "0.30.0"
+# Functionality to convert between SVG and geo-types
+# https://crates.io/crates/geo-svg-io2
+geo-svg-io2 = "0.2.0"
