@@ -27,6 +27,10 @@ mod tests {
 
         let distance = p1.euclidean_distance(&p2);
         println!("两点距离: {}", distance);
+
+        for (i, point) in line.points()/*points_iter()*/.enumerate() {
+            println!("第{}个点: ({}, {})", i, point.x(), point.y());
+        }
     }
 
     /// 测试单个凹壳
