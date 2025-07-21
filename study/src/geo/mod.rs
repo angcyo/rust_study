@@ -1,3 +1,7 @@
+///
+/// @author <a href="mailto: angcyo@126.com">angcyo</a> \
+/// @date 2025/07/19
+///
 #[cfg(test)]
 mod tests {
     use crate::test::{get_test_file_path, save_and_open_file};
@@ -28,7 +32,10 @@ mod tests {
         let distance = p1.euclidean_distance(&p2);
         println!("两点距离: {}", distance);
 
-        for (i, point) in line.points()/*points_iter()*/.enumerate() {
+        for (i, point) in line
+            .points() /*points_iter()*/
+            .enumerate()
+        {
             println!("第{}个点: ({}, {})", i, point.x(), point.y());
         }
     }
