@@ -1,11 +1,33 @@
 #[cfg(test)]
 mod tests {
     use crate::test::{get_test_file_path, save_and_open_file};
-    use geo::ConcaveHull;
+    use geo::{
+        line_string, point, ConcaveHull, Euclidean, EuclideanDistance, EuclideanLength,
+        Length, LineString,
+    };
     use geo_offset::Offset;
     use geo_svg_io2::geo_svg_reader::{svg_to_geometry, svg_to_geometry_collection};
     use geo_svg_io2::geo_svg_writer::{ToSvg, ToSvgString};
     use rc_basis::files::read_file_to_string;
+
+    /// 几何图形测试
+    #[test]
+    fn test_geo() {
+        // 创建一个折线路径
+        let line = LineString::from(vec![(0.0, 0.0), (3.0, 4.0), (6.0, 0.0)]);
+        let line2 = line_string![(x: 0.0, y:0.0), (x:3.0, y:4.0), (x:6.0, y:0.0)];
+        // 计算总长度（欧几里得长度）
+        let length = line.euclidean_length();
+        let length2 = Euclidean.length(&line2);
+
+        println!("路径长度: {}, {}", length, length2); // 输出 10
+
+        let p1 = point!(x: 0.0, y: 0.0);
+        let p2 = point!(x: 3.0, y: 4.0);
+
+        let distance = p1.euclidean_distance(&p2);
+        println!("两点距离: {}", distance);
+    }
 
     /// 测试单个凹壳
     #[test]
