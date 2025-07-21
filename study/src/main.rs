@@ -15,6 +15,7 @@ mod files;
 mod nalgebra;
 mod geo;
 mod test;
+mod lyon;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {

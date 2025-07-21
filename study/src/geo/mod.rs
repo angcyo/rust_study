@@ -24,14 +24,19 @@ mod tests {
         let length = line.euclidean_length();
         let length2 = Euclidean.length(&line2);
 
+        //路径长度: 10, 10
         println!("路径长度: {}, {}", length, length2); // 输出 10
 
         let p1 = point!(x: 0.0, y: 0.0);
         let p2 = point!(x: 3.0, y: 4.0);
 
         let distance = p1.euclidean_distance(&p2);
+        //两点距离: 5
         println!("两点距离: {}", distance);
 
+        // 第0个点: (0, 0)
+        // 第1个点: (3, 4)
+        // 第2个点: (6, 0)
         for (i, point) in line
             .points() /*points_iter()*/
             .enumerate()
