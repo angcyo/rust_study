@@ -24,6 +24,11 @@ mod tests {
         path
     }
 
+    fn test(){
+        let path = build_path();
+        //path.svg_builder();
+    }
+
     #[test]
     fn test_lyon() {
         let points = vec![

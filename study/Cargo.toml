@@ -125,3 +125,8 @@ lyon_path = "1.0.7"
 # 2D Path manipulation/transformation algorithms.
 # https://crates.io/crates/lyon_algorithms
 lyon_algorithms = "1.0.5"
+lyon_svg = "0.17.2"
+
+# An SVG simplification library.
+# https://crates.io/crates/usvg
+usvg = "0.45.1"
