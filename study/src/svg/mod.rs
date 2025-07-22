@@ -4,9 +4,11 @@
 ///
 #[cfg(test)]
 mod tests {
-    use crate::test::get_test_file_path;
+    use crate::test::{get_test_file_path, get_test_output_file_path};
     use rc_basis::files::read_file_to_string;
-    use usvg::{Node, Options, Tree, WriteOptions};
+    use resvg::tiny_skia;
+    use resvg::tiny_skia::Pixmap;
+    use usvg::{Options, Tree, WriteOptions};
 
     #[test]
     fn test_usvg() {
@@ -28,7 +30,7 @@ mod tests {
         println!("{}", tree.to_string(&WriteOptions::default()));
     }
 
-    // 测试解析 SVG 文件
+    /// 测试解析 SVG 文件
     #[test]
     fn test_parse_svg() {
         // 读取 SVG 文件为字符串
@@ -50,5 +52,38 @@ mod tests {
         // 导出成 SVG 文档字符串
         let svg_string = tree.to_string(&WriteOptions::default());
         println!("{}", svg_string);
+    }
+
+    /// 测试svg转png
+    #[test]
+    fn test_svg_to_png() {
+        let name = "5_Repeating_Patterns_0071-0-x-0.svg";
+        let svg = read_file_to_string(get_test_file_path(name).as_str()).unwrap();
+        let tree = Tree::from_str(&svg, &Options::default()).unwrap();
+
+        let size = tree.size();
+        let width = size.width();
+        let height = size.height();
+
+        let rect = tree.root().bounding_box();
+
+        let target_width = 1024;
+        let target_height = 1024;
+
+        let mut pixmap = Pixmap::new(target_width, target_height).unwrap();
+
+        resvg::render(
+            &tree,
+            tiny_skia::Transform::from_scale(
+                target_width as f32 / width,
+                target_height as f32 / height,
+            ),
+            &mut pixmap.as_mut(),
+        );
+
+        let output = get_test_output_file_path(format!("{}.png", name).as_str());
+        pixmap.save_png(output.as_str()).unwrap();
+
+        rc_basis::files::open_file_with_sys(&output);
     }
 }
