@@ -4,10 +4,11 @@
 ///
 #[cfg(test)]
 mod tests {
-    use lyon::geom::Point;
+    use lyon::lyon_tessellation::{FillOptions, FillTessellator, VertexBuffers};
+    use lyon::tessellation::geometry_builder::simple_builder;
     use lyon_algorithms::length::approximate_length;
     use lyon_algorithms::measure::{PathMeasurements, SampleType};
-    use lyon_path::math::point;
+    use lyon_path::math::{point, Point};
     use lyon_path::Path;
 
     fn build_path() -> Path {
@@ -112,5 +113,36 @@ mod tests {
             sample.position(),
             sample.tangent()
         );
+    }
+
+    /// 测试路径镶嵌
+    #[test]
+    fn test_path_tessellation() {
+        // Create a simple path.
+        let mut path_builder = Path::builder();
+        path_builder.begin(point(0.0, 0.0));
+        path_builder.line_to(point(1.0, 2.0));
+        path_builder.line_to(point(2.0, 0.0));
+        path_builder.line_to(point(1.0, 1.0));
+        path_builder.end(true);
+        let path = path_builder.build();
+
+        // Create the destination vertex and index buffers.
+        let mut buffers: VertexBuffers<Point, u16> = VertexBuffers::new();
+
+        {
+            let mut vertex_builder = simple_builder(&mut buffers);
+
+            // Create the tessellator.
+            let mut tessellator = FillTessellator::new();
+
+            // Compute the tessellation.
+            let result =
+                tessellator.tessellate_path(&path, &FillOptions::default(), &mut vertex_builder);
+            assert!(result.is_ok());
+        }
+
+        println!("The generated vertices are: {:?}.", &buffers.vertices[..]);
+        println!("The generated indices are: {:?}.", &buffers.indices[..]);
     }
 }
