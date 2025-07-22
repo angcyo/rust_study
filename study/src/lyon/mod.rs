@@ -24,9 +24,15 @@ mod tests {
         path
     }
 
-    fn test(){
-        let path = build_path();
-        //path.svg_builder();
+    fn build_svg_path() -> Path {
+        //let path = build_path();
+        let mut builder = Path::svg_builder();
+        builder.move_to(point(0.0, 0.0));
+        builder.line_to(point(3.0, 4.0));
+        builder.line_to(point(6.0, 0.0));
+        builder.close();
+        let svg = builder.build();
+        svg
     }
 
     #[test]
