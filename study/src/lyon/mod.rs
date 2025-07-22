@@ -8,6 +8,7 @@ mod tests {
     use lyon::tessellation::geometry_builder::simple_builder;
     use lyon_algorithms::length::approximate_length;
     use lyon_algorithms::measure::{PathMeasurements, SampleType};
+    use lyon_algorithms::walk::{walk_along_path, RegularPattern, WalkerEvent};
     use lyon_path::math::{point, Point};
     use lyon_path::Path;
 
@@ -144,5 +145,27 @@ mod tests {
 
         println!("The generated vertices are: {:?}.", &buffers.vertices[..]);
         println!("The generated indices are: {:?}.", &buffers.indices[..]);
+    }
+
+    /// 测试路径行走, 相当于枚举路径上的点
+    #[test]
+    fn test_walk_along_path() {
+        let path = build_svg_path();
+        let mut contour = Vec::new();
+
+        let mut pattern = RegularPattern {
+            callback: &mut |event: WalkerEvent| {
+                contour.push(event.position);
+                true // Return true to continue walking the path.
+            },
+            // Invoke the callback above at a regular interval of 3 units.
+            interval: 1.0,
+        };
+
+        walk_along_path(&path, 10.0, 0.01, &mut pattern);
+        //The contour is: [(0.3, 0.4), (2.1000001, 2.8000002), (3.9, 2.8), (5.7, 0.39999986), (3.5, 0.0), (0.49999988, 0.0)].
+        //The contour is: [(0.0, 0.0), (1.8000001, 2.4), (3.6000001, 3.2), (5.4, 0.79999995), (3.9999998, 0.0), (0.99999976, 0.0)].
+        //The contour is: [(0.0, 0.0), (0.6, 0.8), (1.2, 1.6), (1.8000001, 2.4), (2.4, 3.2), (3.0, 4.0), (3.6000001, 3.2), (4.2000003, 2.4), (4.8, 1.5999999), (5.4, 0.79999995), (6.0, 0.0), (5.0, 0.0), (3.9999998, 0.0), (3.0, 0.0), (1.9999999, 0.0), (0.99999976, 0.0), (0.0, 0.0)].
+        println!("The contour is: {:?}.", contour);
     }
 }
