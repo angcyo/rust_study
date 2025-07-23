@@ -17,6 +17,7 @@ mod geo;
 mod test;
 mod lyon;
 mod svg;
+mod font;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {

@@ -133,3 +133,16 @@ usvg = "0.45.1"
 # An SVG rendering library.
 # https://crates.io/crates/resvg
 resvg = "0.45.1"
+
+# A high-level, safe, zero-allocation font parser for TrueType, OpenType, and AAT.
+# https://crates.io/crates/ttf-parser
+ttf-parser = "0.25.1"
+# ttf-parser plus support for owned data
+# https://crates.io/crates/owned_ttf_parser
+#owned_ttf_parser = "0.25.0"
+# This crate provides Grapheme Cluster, Word and Sentence boundaries according to Unicode Standard Annex #29 rules.
+# https://crates.io/crates/unicode-segmentation
+unicode-segmentation = "1.12.0"
+# A complete harfbuzz shaping algorithm port to Rust.
+# https://crates.io/crates/rustybuzz
+rustybuzz = "0.20.1"
