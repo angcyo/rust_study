@@ -15,7 +15,6 @@ mod files;
 mod nalgebra;
 mod geo;
 mod test;
-mod lyon;
 mod svg;
 mod font;
 

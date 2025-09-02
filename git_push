@@ -5,5 +5,5 @@ set +x
 
 git remote -v
 git add .
-git commit -a -m "+ font test"
+git commit -a -m "* fix base"
 git push origin

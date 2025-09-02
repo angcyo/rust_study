@@ -113,20 +113,6 @@ geo-svg-io2 = "0.2.0"
 # https://crates.io/crates/geo-offset
 geo-offset = "0.4.0"
 
-# 2D Graphics rendering on the GPU using tessellation.
-# https://crates.io/crates/lyon
-lyon = "1.0.1"
-# 2D quadratic and cubic bézier arcs and line segment math on top of euclid.
-# https://crates.io/crates/lyon_geom/
-lyon_geom = "1.0.6"
-# Types and utilities to store, build and iterate over 2D paths."
-# https://crates.io/crates/lyon_path/
-lyon_path = "1.0.7"
-# 2D Path manipulation/transformation algorithms.
-# https://crates.io/crates/lyon_algorithms
-lyon_algorithms = "1.0.5"
-lyon_svg = "0.17.2"
-
 # An SVG simplification library.
 # https://crates.io/crates/usvg
 usvg = "0.45.1"

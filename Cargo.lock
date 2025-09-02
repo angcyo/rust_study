@@ -4032,6 +4032,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "rc_lyon"
+version = "0.1.0"
+dependencies = [
+ "lyon",
+ "lyon_algorithms",
+ "lyon_geom 1.0.6",
+ "lyon_path 1.0.7",
+ "lyon_svg",
+ "rc_basis",
+]
+
+[[package]]
 name = "rc_macro"
 version = "0.1.0"
 dependencies = [
@@ -4831,11 +4843,6 @@ dependencies = [
  "lettre",
  "libc",
  "lru",
- "lyon",
- "lyon_algorithms",
- "lyon_geom 1.0.6",
- "lyon_path 1.0.7",
- "lyon_svg",
  "mail-send",
  "mime",
  "nalgebra 0.33.2",

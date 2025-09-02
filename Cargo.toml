@@ -6,6 +6,7 @@ members = [
     "rust_crates/rc_basis",
     "rust_crates/rc_command",
     "rust_crates/rc_image",
+    "rust_crates/rc_lyon",
     "rust_crates/rc_log",
     "rust_crates/rc_macro",
     "create_placeholder_image",
