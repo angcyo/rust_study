@@ -4,7 +4,6 @@
 ///
 #[cfg(test)]
 mod tests {
-    use crate::test::{get_test_file_path, save_and_open_file};
     use geo::{
         line_string, point, ConcaveHull, Euclidean, EuclideanDistance, EuclideanLength,
         Length, LineString,
@@ -13,6 +12,7 @@ mod tests {
     use geo_svg_io2::geo_svg_reader::{svg_to_geometry, svg_to_geometry_collection};
     use geo_svg_io2::geo_svg_writer::{ToSvg, ToSvgString};
     use rc_basis::files::read_file_to_string;
+    use rc_basis::test::{get_test_file_path, save_and_open_file};
 
     /// 几何图形测试
     #[test]

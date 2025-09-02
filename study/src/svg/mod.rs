@@ -4,11 +4,11 @@
 ///
 #[cfg(test)]
 mod tests {
-    use crate::test::{get_test_file_path, get_test_output_file_path};
     use rc_basis::files::read_file_to_string;
     use resvg::tiny_skia;
     use resvg::tiny_skia::Pixmap;
     use usvg::{Options, Tree, WriteOptions};
+    use rc_basis::test::{get_test_file_path, get_test_output_file_path};
 
     #[test]
     fn test_usvg() {

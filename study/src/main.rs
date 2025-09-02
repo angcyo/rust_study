@@ -14,7 +14,6 @@ mod web;
 mod files;
 mod nalgebra;
 mod geo;
-mod test;
 mod svg;
 mod font;
 
