@@ -4153,7 +4153,6 @@ dependencies = [
  "lyon_geom 1.0.6",
  "lyon_path 1.0.7",
  "lyon_svg",
- "rc_basis",
 ]
 
 [[package]]
