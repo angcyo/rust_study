@@ -1,0 +1,13 @@
+[package]
+name = "gcode_to_ydd"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 命令行解析
+# https://crates.io/crates/clap
+clap = { version = "4.5.47", features = ["derive"] }
+# https://crates.io/crates/clap_builder
+clap_builder = "4.5.47"
+
+rc_gcode = { path = "../rust_crates/rc_gcode" }

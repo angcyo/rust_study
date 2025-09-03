@@ -13,7 +13,7 @@ members = [
     "empty",
     "macro_demo",
     "cdylib_demo",
-    "create_file_cli",
+    "create_file_cli", "gcode_to_ydd",
 ]
 
 [profile.release]
