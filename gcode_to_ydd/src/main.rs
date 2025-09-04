@@ -1,10 +1,9 @@
-use crate::ydd::gcode_to_ydd_bytes;
 use clap_builder::Parser;
 use rc_basis::files::save_bytes_to_file;
+use rc_gcode::ydd::gcode_to_ydd_bytes;
 use std::path::Path;
 
 mod args;
-mod ydd;
 
 ///
 /// @author <a href="mailto: angcyo@126.com">angcyo</a>
