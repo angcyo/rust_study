@@ -4074,7 +4074,9 @@ dependencies = [
 
 [[package]]
 name = "rc_bytes"
-version = "0.1.0"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30acb809c5092e9487f728912e70468ed46f98aef068e0f1e2f33e02695655ad"
 
 [[package]]
 name = "rc_command"
@@ -4086,7 +4088,7 @@ dependencies = [
 
 [[package]]
 name = "rc_gcode"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lyon_algorithms",
  "lyon_path",
