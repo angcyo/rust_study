@@ -25,6 +25,9 @@ fn path_to_ydd_bytes(
     //--
     let append_points = |writer: &mut ByteWriter, points: &Vec<(f32, f32)>| {
         if !points.is_empty() {
+            //part1
+            writer.write_int8(0, le);
+            //part2
             writer.write_int16(points.len() as i16, le);
             for p in points.iter() {
                 writer.write_int16((p.0 * pe) as i16, le);
@@ -33,10 +36,7 @@ fn path_to_ydd_bytes(
         }
     };
 
-    //part1
-    bytes_writer.write_int8(0, le);
-
-    //part2
+    //--
     each_path_line(path, tolerance, interval, |new_line, p| {
         //新的线段
         if new_line {
@@ -96,6 +96,7 @@ pub fn gcode_to_ydd_bytes(
 
         //part1
         let mut item_part1_writer = ByteWriter::default();
+        item_part1_writer.write_int16(0x10, le); //数据类型
         item_part1_writer.write_int16((item_bounds.0 * pe) as i16, le);
         item_part1_writer.write_int16((item_bounds.1 * pe) as i16, le);
         let w = item_bounds.2 - item_bounds.0;
@@ -108,7 +109,7 @@ pub fn gcode_to_ydd_bytes(
         //part2
         let mut item_part2_writer = ByteWriter::default();
         item_part2_writer.write_int16(0, le); //激光功率
-        item_part2_writer.write_int32(0, le); //雕刻速度mm/min
+        item_part2_writer.write_int32(60 * 1000, le); //雕刻速度mm/min
         item_part2_writer.write_int8(1, le); //激光类型, 0:450激光 1:1064激光
         item_part2_writer.write_int16(60, le); //激光频率
         item_part2_writer.write_int16(20, le); //激光脉宽
@@ -159,4 +160,17 @@ pub fn gcode_to_ydd_bytes(
     result_writer.write_vec(&group_writer.bytes); //组内数据
 
     result_writer.bytes
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::ydd::gcode_to_ydd_bytes;
+
+    #[test]
+    fn test_gcode_to_ydd_bytes() {
+        let input = "../rust_crates/tests/.output/path_to_gcode.gcode";
+        let gcode = std::fs::read_to_string(&input).unwrap();
+        let bytes = gcode_to_ydd_bytes(&gcode, 100, 0.01, 0.0, true);
+        println!("{:?}", bytes);
+    }
 }
