@@ -5,6 +5,7 @@ use clap::Parser;
 /// @author <a href="mailto: angcyo@126.com">angcyo</a>
 /// @date 2025/05/27
 ///
+/// https://docs.rs/clap/latest/clap/_derive/_tutorial/index.html
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
