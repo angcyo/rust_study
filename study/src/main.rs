@@ -6,16 +6,16 @@ use std::sync::Mutex;
 
 mod android;
 mod badges;
+mod files;
+mod font;
+mod geo;
 mod mail;
+mod nalgebra;
 mod pdf;
 mod protocol;
+mod svg;
 mod threads;
 mod web;
-mod files;
-mod nalgebra;
-mod geo;
-mod svg;
-mod font;
 
 #[allow(dead_code)]
 fn ensure_output_dir_exist() {
@@ -222,5 +222,16 @@ mod tests {
         mut_map.keys().for_each(|k| {
             rc_log::log::info!("mut_key:{k} mut_value:{}", mut_map.get(k).unwrap());
         });
+    }
+
+    /// 测试数学计算
+    #[test]
+    fn test_math() {
+        let vec = vec![1, 2, 3, 4, 5];
+        let max_count = vec.len();
+        let count = 5;
+        for i in 0..count {
+            println!("{}", vec[i % max_count]);
+        }
     }
 }
