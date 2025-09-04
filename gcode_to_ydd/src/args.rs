@@ -13,8 +13,8 @@ use clap::Parser;
 #[command(flatten_help = true)]
 //#[command(help_template = utils::FULL_TEMPLATE)]
 pub(crate) struct Args {
-    /// 是否开启调试输出
-    #[arg(long, default_value = "false")]
+    /// 是否开启调试输出, 默认:false
+    #[arg(long, default_value_t = false)]
     pub debug: bool,
 
     /// 需要解析的GCode文件路径
@@ -24,4 +24,21 @@ pub(crate) struct Args {
     /// 指定输出文件全路径, 不指定则输出在当前目录下
     #[arg(short, long)]
     pub output: Option<String>,
+
+    //--
+    /// 公差
+    #[arg(long, default_value_t = 0.01)]
+    pub tolerance: f32,
+
+    /// 是否使用打点间隔采样, >0生效
+    #[arg(long, default_value_t = 0.0)]
+    pub interval: f32,
+
+    /// 写入字节数值时, 数值需要放大的倍数
+    #[arg(long, default_value_t = 100)]
+    pub precision: usize,
+
+    /// 是否使用小端字节序, 默认:true
+    #[arg(long, default_value_t = true)]
+    pub le: bool,
 }

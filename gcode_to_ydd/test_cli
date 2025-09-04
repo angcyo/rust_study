@@ -3,4 +3,7 @@
 # Turn off echo
 set +x
 
-cargo run --package gcode_to_ydd --bin gcode_to_ydd -- -i ../rust_crates/tests/Toothy_Baby_Croc.gcode -o ../.output/output_gcode.ydd --debug
+#cargo run --package gcode_to_ydd --bin gcode_to_ydd -- -i ../rust_crates/tests/Toothy_Baby_Croc.gcode -o ../.output/output_gcode.ydd --debug
+
+#cargo run --package gcode_to_ydd --bin gcode_to_ydd -- -i ../rust_crates/tests/.output/path_to_gcode.gcode -o ../.output/path_to_gcode.ydd --debug
+cargo run --package gcode_to_ydd --bin gcode_to_ydd -- -i ../rust_crates/tests/.output/path_walk_along_to_gcode.gcode -o ../.output/path_walk_along_to_gcode.ydd --debug

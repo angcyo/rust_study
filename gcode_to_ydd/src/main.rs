@@ -1,9 +1,10 @@
+use crate::ydd::gcode_to_ydd_bytes;
 use clap_builder::Parser;
-use rc_gcode::handler::GCodeValueHandlerPath;
-use rc_gcode::parser::GCodeParser;
+use rc_basis::files::save_bytes_to_file;
 use std::path::Path;
 
 mod args;
+mod ydd;
 
 ///
 /// @author <a href="mailto: angcyo@126.com">angcyo</a>
@@ -33,14 +34,15 @@ fn main() {
     };
     //--
     let gcode = std::fs::read_to_string(args.input).unwrap();
-    let mut parser = GCodeParser::new(gcode);
+    let bytes = gcode_to_ydd_bytes(
+        &gcode,
+        args.precision,
+        args.tolerance,
+        args.interval,
+        args.le,
+    );
+    save_bytes_to_file(&output, &bytes).unwrap();
 
-    let mut handler = GCodeValueHandlerPath::default();
-    parser.parse(&mut handler);
-
-    for (i, layer) in handler.layers.iter().enumerate() {
-        let path = &layer.path;
-    }
     //println!("{}", gcode);
     if (args.debug) {
         println!(

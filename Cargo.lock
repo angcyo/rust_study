@@ -1398,6 +1398,9 @@ version = "0.1.0"
 dependencies = [
  "clap",
  "clap_builder",
+ "lyon_path",
+ "rc_basis",
+ "rc_bytes",
  "rc_gcode",
 ]
 
@@ -4070,6 +4073,10 @@ dependencies = [
  "regex",
  "uuid",
 ]
+
+[[package]]
+name = "rc_bytes"
+version = "0.1.0"
 
 [[package]]
 name = "rc_command"
