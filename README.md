@@ -1,5 +1,26 @@
 [TOC]
 
+# Rust
+
+https://www.rust-lang.org/zh-CN/
+
+## 使用 Rustup 安装 Rust
+
+`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
+- `~/.cargo/bin` : 所有工具安装目录
+- `rustc`        : 编译器
+- `cargo`        : 包管理工具
+- `rustup`       : 升级工具/管理工具链 `rustup target`
+
+## 更新 Rust
+
+`rustup update`
+
+## 卸载 Rust
+
+`rustup self uninstall`
+
 # crates.io: `Rust Package Registry`
 
 https://crates.io/
