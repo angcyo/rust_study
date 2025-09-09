@@ -12,3 +12,5 @@ rem cargo build --release --target x86_64-unknown-linux-gnu --package gif_to_ild
 rem cargo build --release --target x86_64-unknown-linux-musl --package gif_to_ild
 
 rustup show active-toolchain
+
+explorer ..\target\release
