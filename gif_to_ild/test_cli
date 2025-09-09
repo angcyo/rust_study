@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+#cargo run --package gif_to_ild --bin gif_to_ild -- -i ../rust_crates/tests/test.png -o ../.output/output_ild.ild --debug
+
+#cargo run --package gif_to_ild --bin gif_to_ild -- -i ../rust_crates/tests/test.png -o ../.output/output_ild.ild --debug
+#cargo run --package gif_to_ild --bin gif_to_ild -- -i ../rust_crates/tests/test.png --debug
+cargo run --package gif_to_ild --bin gif_to_ild -- -i ../rust_crates/tests/向上走的小人.gif --debug

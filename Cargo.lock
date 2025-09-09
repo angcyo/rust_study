@@ -1624,6 +1624,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "gif_to_ild"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "clap_builder",
+ "image 0.25.8",
+ "rc_basis",
+ "rc_gcode",
+]
+
+[[package]]
 name = "gimli"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
