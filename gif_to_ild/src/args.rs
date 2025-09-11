@@ -32,8 +32,8 @@ pub(crate) struct Args {
     #[arg(short = 'y', long, default_value_t = 0)]
     pub offset_y: i16,
 
-    /// 灰度阈值, >这个值的像素, 视为白色255, 无数据
-    #[arg(short, long, default_value_t = 250)]
+    /// 灰度阈值, <=这个值的像素, 视为黑色0, 无数据
+    #[arg(short, long, default_value_t = 8)]
     pub gray_threshold: u8,
 
     /// 透明阈值, 透明通道<=这个值的像素, 视为白色255, 无数据

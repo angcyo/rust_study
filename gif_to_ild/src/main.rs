@@ -1,6 +1,6 @@
 use clap_builder::Parser;
 use rc_basis::files::save_bytes_to_file;
-use rc_gcode::ild::{gif_path_to_ild_bytes, image_path_to_ild_bytes};
+use rc_gcode::ild::{gif_path_to_ild_bytes_2d_rgb, image_path_to_ild_bytes};
 use std::path::Path;
 
 mod args;
@@ -34,7 +34,7 @@ fn main() {
     //--gif结尾
     let bytes = if args.input.to_lowercase().ends_with(".gif") {
         //Gif
-        gif_path_to_ild_bytes(
+        gif_path_to_ild_bytes_2d_rgb(
             &args.input,
             args.offset_x,
             args.offset_y,
