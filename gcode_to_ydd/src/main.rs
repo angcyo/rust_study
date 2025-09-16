@@ -36,6 +36,7 @@ fn main() {
     let bytes = gcode_to_ydd_bytes(
         &gcode,
         args.precision,
+        args.data_version,
         args.tolerance,
         args.interval,
         args.le,

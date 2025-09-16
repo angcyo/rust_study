@@ -41,4 +41,10 @@ pub(crate) struct Args {
     /// 是否使用小端字节序, 默认:true
     #[arg(long, default_value_t = true)]
     pub le: bool,
+
+    /// 输出数据版本, 默认1
+    ///     - 0x01 :坐标使用u16类型数据
+    ///     - 0x02 :坐标使用f32类型数据
+    #[arg(long, default_value_t = 1)]
+    pub data_version: u8,
 }
