@@ -3,6 +3,9 @@ use lazy_static::lazy_static;
 use rc_basis::ptl;
 use std::collections::HashMap;
 use std::sync::Mutex;
+use threecrate_core::{Point3f, PointCloud};
+use threecrate_visualization::InteractiveViewer;
+use crate::threecrate::test_three_crate_core;
 
 mod android;
 mod badges;
@@ -15,6 +18,7 @@ mod pdf;
 mod protocol;
 mod svg;
 mod threads;
+mod threecrate;
 mod web;
 
 #[allow(dead_code)]
@@ -170,6 +174,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     test_image();
 
     protocol::test_protocol();
+
+    //2025-09-16
+    test_three_crate_core();
 
     Ok(())
 }
