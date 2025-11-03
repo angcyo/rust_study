@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+cargo run --package json_modify_cli --bin json_modify_cli -- -i ../tests/LX2.version -k test -v 123 --debug
+cargo run --package json_modify_cli --bin json_modify_cli -- -i ../tests/LX2.version -k version -v 9000 --debug
+cargo run --package json_modify_cli --bin json_modify_cli -- -i ../tests/LX2.version -k bool -v false

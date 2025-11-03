@@ -1,0 +1,18 @@
+[package]
+name = "json_modify_cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 命令行解析
+# https://crates.io/crates/clap
+clap = { version = "4.5.47", features = ["derive"] }
+# https://crates.io/crates/clap_builder
+clap_builder = "4.5.47"
+
+# https://crates.io/crates/serde
+serde = { version = "1.0.228", features = ["derive"] }
+# https://crates.io/crates/serde_json
+serde_json = "1.0.145"
+# https://crates.io/crates/tempfile
+tempfile = "3.23.0"

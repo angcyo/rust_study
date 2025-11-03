@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Turn off echo
+set +x
+
+# 需要在Linux环境才能编译或者使用`cargo install cross`交叉编译
+# 使用默认平台编译 `rustup show active-toolchain`
+# stable-x86_64-unknown-linux-gnu (default)
+# 输出目录在 ./release
+
+cargo build --release --target x86_64-unknown-linux-gnu --package json_modify_cli
+#cargo build --release --target x86_64-unknown-linux-musl --package json_modify_cli
+
+rustup show active-toolchain
