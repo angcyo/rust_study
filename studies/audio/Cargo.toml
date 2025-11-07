@@ -1,0 +1,15 @@
+[package]
+name = "audio"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rc_basis = { path = "../../rust_crates/rc_basis" }
+
+# https://crates.io/crates/symphonia
+# Symphonia 是一个纯 Rust 音频解码和媒体解复用库，支持 AAC、ADPCM、AIFF、ALAC、CAF、FLAC、MKV、MP1、MP2、MP3、MP4、OGG、Vorbis、WAV 和 WebM 格式。
+symphonia = "0.5.5"
+
+# https://crates.io/crates/rustfft
+# RustFFT 是一个用纯 Rust 编写的高性能、SIMD 加速的 FFT 库。它可以在 O(nlogn) 时间内计算任意大小的 FFT，包括素数大小。
+rustfft = "6.4.1"
