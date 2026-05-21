@@ -49,6 +49,12 @@ mod tests {
 
     /// 测试 lz4 解压
     ///
+    /// [TEST_FILE_NAME1] 耗时: 120.6µs
+    /// [TEST_FILE_NAME2] 耗时: 4.7661ms
+    /// [TEST_FILE_NAME3] 耗时: 86.2499ms
+    /// [TEST_FILE_NAME4] 耗时: 16.3574ms
+    /// [TEST_FILE_NAME5] 耗时: 216.2536ms
+    ///
     /// https://github.com/PSeitz/lz4_flex/blob/main/examples/decompress_block.rs
     #[test]
     fn test_lz4_decompression() {
@@ -94,6 +100,12 @@ mod tests {
 
     /// 测试 zlib 解压
     ///
+    /// [TEST_FILE_NAME1] 耗时: 1.9125ms
+    /// [TEST_FILE_NAME2] 耗时: 4.2778ms
+    /// [TEST_FILE_NAME3] 耗时: 76.5786ms
+    /// [TEST_FILE_NAME1] 耗时: 11.7878ms
+    /// [TEST_FILE_NAME1] 耗时: 142.4359ms
+    ///
     /// https://github.com/PSeitz/lz4_flex/blob/main/examples/decompress_block.rs
     #[test]
     fn test_zlib_decompression() {
@@ -123,7 +135,7 @@ mod tests {
     fn test_7zip_compression() {
         use lzma_rust2::{LzmaOptions, LzmaWriter};
         use rc_test::*;
-        let bytes = read_test_file_bytes(TEST_FILE_NAME4, false);
+        let bytes = read_test_file_bytes(TEST_FILE_NAME5, false);
         let mut input = bytes.as_slice();
         let input_len = input.len();
         let mut compressed = Vec::new();
@@ -135,7 +147,7 @@ mod tests {
         .unwrap();
         measure_time(|| std::io::copy(&mut input, &mut writer).unwrap());
         writer.finish().unwrap();
-        write_test_file_bytes(&format!("{}.7zip", TEST_FILE_NAME4), &compressed);
+        write_test_file_bytes(&format!("{}.7zip", TEST_FILE_NAME5), &compressed);
         println!(
             "{} -> {} ({}%)",
             input_len,
@@ -145,6 +157,11 @@ mod tests {
     }
 
     /// 测试 LZMA (7-Zip) 解压
+    /// [TEST_FILE_NAME1] 耗时: 9.0969ms
+    /// [TEST_FILE_NAME2] 耗时: 10.373ms
+    /// [TEST_FILE_NAME3] 耗时: 182.6222ms
+    /// [TEST_FILE_NAME4] 耗时: 31.2794ms
+    /// [TEST_FILE_NAME5] 耗时: 486.8894ms
     ///
     /// https://github.com/hasenbanck/lzma-rust2/blob/master/examples/lzma_reader.rs
     #[test]
@@ -152,13 +169,13 @@ mod tests {
         use lzma_rust2::LzmaReader;
         use rc_test::*;
         use std::io::Read;
-        let bytes = read_test_file_bytes(&format!("{}.7zip", TEST_FILE_NAME4), true);
+        let bytes = read_test_file_bytes(&format!("{}.7zip", TEST_FILE_NAME5), true);
         let input = bytes.as_slice();
         let mut reader = LzmaReader::new_mem_limit(input, u32::MAX, None).unwrap();
         let mut decompressed = Vec::new();
         //measure_time(|| reader.read_to_end(&mut decompressed).unwrap());
         measure_time(|| std::io::copy(&mut reader, &mut decompressed).unwrap());
-        write_test_file_bytes(TEST_FILE_NAME4, &decompressed);
+        write_test_file_bytes(TEST_FILE_NAME5, &decompressed);
     }
 
     /// 测试 LZMA (7-Zip) 压缩
