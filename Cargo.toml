@@ -15,7 +15,10 @@ members = [
     "cdylib_demo",
     "create_file_cli", 
     "gcode_to_ydd", 
-    "gif_to_ild", "json_modify_cli", "studies/audio",
+    "gif_to_ild",
+    "json_modify_cli",
+    "studies/audio",
+    "compression_demo", "rc_test",
 ]
 
 [profile.release]

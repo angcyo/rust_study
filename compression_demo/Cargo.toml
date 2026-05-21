@@ -1,0 +1,23 @@
+[package]
+name = "compression_demo"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rc_test = { path = "../rc_test" }
+
+# Fastest pure Rust implementation of LZ4 compression/decompression.
+# https://github.com/pseitz/lz4_flex
+# https://crates.io/crates/lz4_flex
+lz4_flex = "0.13.1"
+
+# LZMA / LZMA2 in native Rust
+# LZMA / LZMA2 / LZIP / XZ compression ported from 'tukaani xz for java'
+# https://github.com/hasenbanck/lzma-rust2/
+# https://crates.io/crates/lzma-rust2
+lzma-rust2 = "0.16.2"
+
+# DEFLATE, gzip, and zlib bindings for Rust
+# https://github.com/rust-lang/flate2-rs
+# https://crates.io/crates/flate2
+flate2 = "1.1.9"
