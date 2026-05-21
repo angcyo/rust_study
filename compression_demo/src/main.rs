@@ -106,7 +106,7 @@ mod tests {
     /// [TEST_FILE_NAME1] 耗时: 11.7878ms
     /// [TEST_FILE_NAME1] 耗时: 142.4359ms
     ///
-    /// https://github.com/PSeitz/lz4_flex/blob/main/examples/decompress_block.rs
+    /// https://github.com/rust-lang/flate2-rs/blob/main/examples/decompress_file.rs
     #[test]
     fn test_zlib_decompression() {
         use flate2::bufread::GzDecoder;
