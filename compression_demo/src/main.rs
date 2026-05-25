@@ -32,7 +32,7 @@ mod tests {
     ///
     /// https://github.com/PSeitz/lz4_flex/blob/main/examples/compress_block.rs
     #[test]
-    fn test_lz4_compression() {
+    fn test_lz4_compression_block() {
         use lz4_flex::block::compress_prepend_size;
         use rc_test::*;
         let bytes = read_test_file_bytes(TEST_FILE_NAME5, false);
@@ -57,13 +57,59 @@ mod tests {
     ///
     /// https://github.com/PSeitz/lz4_flex/blob/main/examples/decompress_block.rs
     #[test]
-    fn test_lz4_decompression() {
+    fn test_lz4_decompression_block() {
         use lz4_flex::decompress_size_prepended;
         use rc_test::*;
         let bytes = read_test_file_bytes(&format!("{}.lz4", TEST_FILE_NAME5), true);
         let input = bytes.as_slice();
         let uncompressed = measure_time(|| decompress_size_prepended(&input).unwrap());
         write_test_file_bytes(TEST_FILE_NAME5, &uncompressed);
+    }
+
+    /// [TEST_FILE_NAME1] 耗时: 108.7µs 93115 -> 93130 (100%)
+    /// [TEST_FILE_NAME2] 耗时: 147.7µs 306828 -> 177857 (57%)
+    /// [TEST_FILE_NAME3] 耗时: 183.4147ms 5581188 -> 3233547 (57%)
+    /// [TEST_FILE_NAME4] 耗时: 328.9µs 1507233 -> 453653 (30%)
+    /// [TEST_FILE_NAME5] 耗时: 409.0284ms 17294691 -> 5633786 (32%)
+    /// https://github.com/PSeitz/lz4_flex/blob/main/examples/compress.rs
+    #[test]
+    fn test_lz4_compression_frame() {
+        use rc_test::*;
+        let bytes = read_test_file_bytes(TEST_FILE_NAME5, false);
+        let mut input = bytes.as_slice();
+        let input_len = input.len();
+        let mut compressed = Vec::new();
+        // Wrap the stdout writer in a LZ4 Frame writer.
+        let mut wtr = lz4_flex::frame::FrameEncoder::new(&mut compressed);
+        measure_time(|| std::io::copy(&mut input, &mut wtr).unwrap());
+        wtr.finish().unwrap();
+        write_test_file_bytes(&format!("{}.frame.lz4", TEST_FILE_NAME5), &compressed);
+        println!(
+            "{} -> {} ({}%)",
+            input_len,
+            compressed.len(),
+            compressed.len() * 100 / input_len
+        )
+    }
+
+    /// [TEST_FILE_NAME1] 耗时: 441.2µs
+    /// [TEST_FILE_NAME2] 耗时: 20.9957ms
+    /// [TEST_FILE_NAME3] 耗时: 113.5722ms
+    /// [TEST_FILE_NAME4] 耗时: 33.4374ms
+    /// [TEST_FILE_NAME5] 耗时: 235.4879ms
+    ///
+    /// https://github.com/PSeitz/lz4_flex/blob/main/examples/decompress.rs
+    #[test]
+    fn test_lz4_decompression_frame() {
+        use rc_test::*;
+        let bytes = read_test_file_bytes(&format!("{}.frame.lz4", TEST_FILE_NAME5), true);
+        let input = bytes.as_slice();
+        // Wrap the stdin reader in a LZ4 FrameDecoder.
+        let mut reader = lz4_flex::frame::FrameDecoder::new(input);
+        let mut decompressed = Vec::new();
+        //measure_time(|| reader.read_to_end(&mut decompressed).unwrap());
+        measure_time(|| std::io::copy(&mut reader, &mut decompressed).unwrap());
+        write_test_file_bytes(TEST_FILE_NAME5, &decompressed);
     }
 
     //MARK: - zlib
@@ -168,7 +214,6 @@ mod tests {
     fn test_7zip_decompression() {
         use lzma_rust2::LzmaReader;
         use rc_test::*;
-        use std::io::Read;
         let bytes = read_test_file_bytes(&format!("{}.7zip", TEST_FILE_NAME5), true);
         let input = bytes.as_slice();
         let mut reader = LzmaReader::new_mem_limit(input, u32::MAX, None).unwrap();
@@ -215,7 +260,6 @@ mod tests {
     fn test_lzip_decompression() {
         use lzma_rust2::LzipReader;
         use rc_test::*;
-        use std::io::Read;
         let bytes = read_test_file_bytes(&format!("{}.lzip", TEST_FILE_NAME4), true);
         let input = bytes.as_slice();
         let mut reader = LzipReader::new(input);
@@ -262,7 +306,6 @@ mod tests {
     fn test_7zip_decompression2() {
         use lzma_rust2::{Lzma2Reader, LzmaOptions};
         use rc_test::*;
-        use std::io::Read;
         let bytes = read_test_file_bytes(&format!("{}.7zip2", TEST_FILE_NAME4), true);
         let input = bytes.as_slice();
         let mut reader = Lzma2Reader::new(input, LzmaOptions::DICT_SIZE_DEFAULT, None);
