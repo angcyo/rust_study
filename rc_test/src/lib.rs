@@ -59,4 +59,20 @@ mod tests {
     fn it_works() {
         println_current_dir()
     }
+
+    /// 读取指定文件中的 Hex 数据, 转成二进制数据存储到新文件
+    #[test]
+    fn test_read_file_to_bytes() {
+        println_current_dir();
+        let input_path = "E:/log/mcu_300kb.log";
+        let output_path = "E:/log/mcu_300kb.log.bin";
+        //使用utf-8 读取文件数据
+        let text = std::fs::read_to_string(input_path).unwrap();
+        //使用空格分割, 将HEX数据转换成二进制数据
+        let bytes: Vec<u8> = text
+            .split_whitespace()
+            .map(|s| u8::from_str_radix(s, 16).unwrap())
+            .collect();
+        write_test_file_bytes(output_path, &bytes);
+    }
 }
