@@ -75,4 +75,16 @@ mod tests {
             .collect();
         write_test_file_bytes(output_path, &bytes);
     }
+
+    /// 对比2个文件的数据是否一致
+    #[test]
+    fn test_compare_file() {
+        println_current_dir();
+        let path1 = "E:/projects/rust/rust_study/tests/image 1-image-stucki-1779331603635_300kb.ydd";
+        let path2 = "E:/projects/rust/rust_study/tests/.output/mcu_300kb.log";
+        assert_eq!(
+            read_test_file_bytes(path1, false),
+            read_test_file_bytes(path2, false)
+        );
+    }
 }

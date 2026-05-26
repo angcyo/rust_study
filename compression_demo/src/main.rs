@@ -75,15 +75,20 @@ mod tests {
     #[test]
     fn test_lz4_compression_frame() {
         use rc_test::*;
-        let bytes = read_test_file_bytes(TEST_FILE_NAME5, false);
+        let name = TEST_FILE_NAME2;
+        let bytes = read_test_file_bytes(name, false);
         let mut input = bytes.as_slice();
         let input_len = input.len();
         let mut compressed = Vec::new();
         // Wrap the stdout writer in a LZ4 Frame writer.
-        let mut wtr = lz4_flex::frame::FrameEncoder::new(&mut compressed);
+        //let mut wtr = lz4_flex::frame::FrameEncoder::new(&mut compressed);
+        let mut frame_info = lz4_flex::frame::FrameInfo::default();
+        frame_info.block_size = lz4_flex::frame::BlockSize::Max64KB;
+        //frame_info.block_mode = lz4_flex::frame::BlockMode::Linked;
+        let mut wtr = lz4_flex::frame::FrameEncoder::with_frame_info(frame_info, &mut compressed);
         measure_time(|| std::io::copy(&mut input, &mut wtr).unwrap());
         wtr.finish().unwrap();
-        write_test_file_bytes(&format!("{}.frame.lz4", TEST_FILE_NAME5), &compressed);
+        write_test_file_bytes(&format!("{}.frame.lz4", name), &compressed);
         println!(
             "{} -> {} ({}%)",
             input_len,
@@ -102,14 +107,17 @@ mod tests {
     #[test]
     fn test_lz4_decompression_frame() {
         use rc_test::*;
-        let bytes = read_test_file_bytes(&format!("{}.frame.lz4", TEST_FILE_NAME5), true);
+        /*let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(&format!("{}.frame.lz4", name), true);*/
+        let name = "mcu_300kb.log";
+        let bytes = std::fs::read("E:/log/mcu_300kb.log.bin").unwrap();
         let input = bytes.as_slice();
         // Wrap the stdin reader in a LZ4 FrameDecoder.
         let mut reader = lz4_flex::frame::FrameDecoder::new(input);
         let mut decompressed = Vec::new();
         //measure_time(|| reader.read_to_end(&mut decompressed).unwrap());
         measure_time(|| std::io::copy(&mut reader, &mut decompressed).unwrap());
-        write_test_file_bytes(TEST_FILE_NAME5, &decompressed);
+        write_test_file_bytes(name, &decompressed);
     }
 
     //MARK: - zlib
