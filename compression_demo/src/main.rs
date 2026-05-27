@@ -134,16 +134,17 @@ mod tests {
     #[test]
     fn test_zlib_compression() {
         use flate2::Compression;
-        use flate2::write::GzEncoder;
+        use flate2::write::ZlibEncoder;
         use rc_test::*;
-        let bytes = read_test_file_bytes(TEST_FILE_NAME1, false);
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(name, false);
         let mut input = bytes.as_slice();
         let input_len = input.len();
         let mut compressed = Vec::new();
-        let mut encoder = GzEncoder::new(&mut compressed, Compression::default());
+        let mut encoder = ZlibEncoder::new(&mut compressed, Compression::default());
         measure_time(|| std::io::copy(&mut input, &mut encoder).unwrap());
         let output = encoder.finish().unwrap();
-        write_test_file_bytes(&format!("{}.zlib", TEST_FILE_NAME1), &output);
+        write_test_file_bytes(&format!("{}.zlib", name), &output);
         println!(
             "{} -> {} ({}%)",
             input_len,
@@ -163,14 +164,50 @@ mod tests {
     /// https://github.com/rust-lang/flate2-rs/blob/main/examples/decompress_file.rs
     #[test]
     fn test_zlib_decompression() {
+        use flate2::bufread::ZlibDecoder;
+        use rc_test::*;
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(&format!("{}.zlib", name), true);
+        let input = bytes.as_slice();
+        let mut decoder = ZlibDecoder::new(input);
+        let mut decompressed = Vec::new();
+        measure_time(|| std::io::copy(&mut decoder, &mut decompressed).unwrap());
+        write_test_file_bytes(name, &decompressed);
+    }
+
+    #[test]
+    fn test_gzip_compression() {
+        use flate2::Compression;
+        use flate2::write::GzEncoder;
+        use rc_test::*;
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(name, false);
+        let mut input = bytes.as_slice();
+        let input_len = input.len();
+        let mut compressed = Vec::new();
+        let mut encoder = GzEncoder::new(&mut compressed, Compression::default());
+        measure_time(|| std::io::copy(&mut input, &mut encoder).unwrap());
+        let output = encoder.finish().unwrap();
+        write_test_file_bytes(&format!("{}.gzip", name), &output);
+        println!(
+            "{} -> {} ({}%)",
+            input_len,
+            output.len(),
+            output.len() * 100 / input_len
+        )
+    }
+
+    #[test]
+    fn test_gzip_decompression() {
         use flate2::bufread::GzDecoder;
         use rc_test::*;
-        let bytes = read_test_file_bytes(&format!("{}.zlib", TEST_FILE_NAME5), true);
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(&format!("{}.gzip", name), true);
         let input = bytes.as_slice();
         let mut decoder = GzDecoder::new(input);
         let mut decompressed = Vec::new();
         measure_time(|| std::io::copy(&mut decoder, &mut decompressed).unwrap());
-        write_test_file_bytes(TEST_FILE_NAME5, &decompressed);
+        write_test_file_bytes(name, &decompressed);
     }
 
     //MARK: - lzma
