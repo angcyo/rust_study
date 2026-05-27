@@ -18,7 +18,7 @@ members = [
     "gif_to_ild",
     "json_modify_cli",
     "studies/audio",
-    "compression_demo", "rc_test",
+    "compression_demo", "rc_test", "hex_to_bin_cli",
 ]
 
 [profile.release]
