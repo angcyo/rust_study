@@ -166,8 +166,10 @@ mod tests {
     fn test_zlib_decompression() {
         use flate2::bufread::ZlibDecoder;
         use rc_test::*;
-        let name = TEST_FILE_NAME5;
-        let bytes = read_test_file_bytes(&format!("{}.zlib", name), true);
+        //let name = TEST_FILE_NAME5;
+        //let bytes = read_test_file_bytes(&format!("{}.zlib", name), true);
+        let name = "789c.txt";
+        let bytes = std::fs::read("E:/temp/789c.txt.bin").unwrap();
         let input = bytes.as_slice();
         let mut decoder = ZlibDecoder::new(input);
         let mut decompressed = Vec::new();
