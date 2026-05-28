@@ -177,6 +177,13 @@ mod tests {
         write_test_file_bytes(name, &decompressed);
     }
 
+    /// 测试 zlib 压缩
+    ///
+    /// [TEST_FILE_NAME1] 耗时: 8.2093ms 93115 -> 90187 (96%)
+    /// [TEST_FILE_NAME2] 耗时: 73.5666ms 306828 -> 69267 (22%)
+    /// [TEST_FILE_NAME3] 耗时: 1.4295227s 5581188 -> 1178578 (21%)
+    /// [TEST_FILE_NAME4] 耗时: 261.5602ms 1507233 -> 234227 (15%)
+    /// [TEST_FILE_NAME5] 耗时: 2.7459241s 17294691 -> 2892321 (16%)
     #[test]
     fn test_gzip_compression() {
         use flate2::Compression;
