@@ -21,13 +21,20 @@ fn main() {
             }
         }
     } else if input_path.is_file() {
-        handle_resize_image(&input_path.to_path_buf(), &args, None);
+        let output_path = handle_resize_image(&input_path.to_path_buf(), &args, None);
+        if output_path.is_some() {
+            println!("{}", output_path.unwrap());
+        }
     } else {
         println!("无法处理的输入->{}不是一个文件或目录", input_path.display());
     }
 }
 
-fn handle_resize_image(path: &PathBuf, args: &Args, output_dir: Option<&PathBuf>) {
+fn handle_resize_image(
+    path: &PathBuf,
+    args: &Args,
+    output_dir: Option<&PathBuf>,
+) -> Option<String> {
     let image = image::open(path);
     match image {
         Ok(image) => {
@@ -46,6 +53,7 @@ fn handle_resize_image(path: &PathBuf, args: &Args, output_dir: Option<&PathBuf>
                     rc_image::convert::image_to_base64(&new_image).unwrap()
                 );
                 println!("{}->\n{}", path.to_str().unwrap(), base64);
+                Some(base64)
             } else {
                 //分割.前后的字符串
                 let (file_name, file_extension) = path
@@ -72,17 +80,20 @@ fn handle_resize_image(path: &PathBuf, args: &Args, output_dir: Option<&PathBuf>
                             let _ = std::fs::create_dir_all(output_dir.clone());
                         }
                         let output_file_path = output_dir.join(new_file_name);
-                        image.save(output_file_path).unwrap();
+                        image.save(&output_file_path).unwrap();
+                        Some(output_file_path.to_str()?.to_string())
                     }
                     None => {
                         let new_file_path = path.with_file_name(new_file_name);
-                        new_image.save(new_file_path).unwrap();
+                        new_image.save(&new_file_path).unwrap();
+                        Some(new_file_path.to_str()?.to_string())
                     }
                 }
             }
         }
         Err(e) => {
             println!("无法打开图片[{}]->{}", path.to_str().unwrap(), e);
+            None
         }
     }
 }
