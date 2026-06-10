@@ -8,6 +8,10 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
+    use lz4_flex::decompress_size_prepended;
+    use rc_test::{measure_time, read_test_file_bytes, write_test_file_bytes};
+    use std::io::Write;
+
     static TEST_FILE_NAME1: &str = "FaceQ.png";
 
     static TEST_FILE_NAME2: &str = "image 1-image-stucki-1779331603635_300kb.ydd";
@@ -60,10 +64,11 @@ mod tests {
     fn test_lz4_decompression_block() {
         use lz4_flex::decompress_size_prepended;
         use rc_test::*;
-        let bytes = read_test_file_bytes(&format!("{}.lz4", TEST_FILE_NAME5), true);
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(&format!("{}.lz4", name), true);
         let input = bytes.as_slice();
         let uncompressed = measure_time(|| decompress_size_prepended(&input).unwrap());
-        write_test_file_bytes(TEST_FILE_NAME5, &uncompressed);
+        write_test_file_bytes(name, &uncompressed);
     }
 
     /// [TEST_FILE_NAME1] 耗时: 108.7µs 93115 -> 93130 (100%)
@@ -367,5 +372,108 @@ mod tests {
         //measure_time(|| reader.read_to_end(&mut decompressed).unwrap());
         measure_time(|| std::io::copy(&mut reader, &mut decompressed).unwrap());
         write_test_file_bytes(TEST_FILE_NAME4, &decompressed);
+    }
+
+    /// 测试 ZIP 压缩
+    /// [TEST_FILE_NAME1] 耗时: 10.9622ms 93115 -> 90894 (97%)
+    /// [TEST_FILE_NAME2] 耗时: 39.8359ms 306828 -> 65519 (21%)
+    /// [TEST_FILE_NAME3] 耗时: 746.6105ms 5581188 -> 1173222 (21%)
+    /// [TEST_FILE_NAME4] 耗时: 235.3087ms 1507233 -> 236348 (15%)
+    /// [TEST_FILE_NAME5] 耗时: 2.8189703s 17294691 -> 2927933 (16%)
+    ///
+    /// https://github.com/zip-rs/zip2/blob/master/examples/write_sample.rs
+    #[test]
+    fn test_zip_compression() {
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(name, false);
+        let input = bytes.as_slice();
+        let input_len = input.len();
+
+        // 创建一个动态字节数组，并用 Cursor 包装它
+        let compressed = Vec::new();
+        let mut cursor = std::io::Cursor::new(compressed);
+
+        // 将 Cursor 传给 ZipWriter
+        let mut zip = zip::ZipWriter::new(&mut cursor);
+        // 3. 配置压缩选项
+        let options = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Deflated);
+
+        // 4. 写入第一个内存文件
+        zip.start_file(name, options).unwrap();
+        measure_time(|| zip.write_all(input).unwrap());
+
+        // 核心步骤：完成写入，这会将中央目录写入 Cursor
+        // finish() 会返回包装的 inner 引用（这里就是 &mut cursor）
+        zip.finish().unwrap();
+
+        // 通过 into_inner() 将 Cursor 内部的 Vec<u8> 提取出来
+        let output = cursor.into_inner();
+
+        write_test_file_bytes(&format!("{}.zip", name), &output);
+        println!(
+            "{} -> {} ({}%)",
+            input_len,
+            output.len(),
+            output.len() * 100 / input_len
+        )
+    }
+
+    /// 测试 ZIP 解压
+    ///
+    /// [TEST_FILE_NAME1] 耗时: 1.6343ms
+    /// [TEST_FILE_NAME2] 耗时: 3.9757ms
+    /// [TEST_FILE_NAME3] 耗时: 68.6047ms
+    /// [TEST_FILE_NAME4] 耗时: 10.7995ms
+    /// [TEST_FILE_NAME5] 耗时: 125.8027ms
+    ///
+    /// https://github.com/zip-rs/zip2/blob/master/examples/extract_lorem.rs
+    #[test]
+    fn test_zip_decompression() {
+        let name = TEST_FILE_NAME5;
+        let bytes = read_test_file_bytes(&format!("{}.zip", name), true);
+        let input = bytes.as_slice();
+        let cursor = std::io::Cursor::new(input);
+        let mut archive = zip::ZipArchive::new(cursor).unwrap();
+
+        // 2. 遍历 ZIP 中的每一个文件/目录
+        for i in 0..archive.len() {
+            let mut file = archive.by_index(i).unwrap();
+
+            // 解压文件
+            let mut decompressed = Vec::new();
+            measure_time(|| std::io::copy(&mut file, &mut decompressed).unwrap());
+            write_test_file_bytes(name, &decompressed);
+
+            /*// 清理路径，防止 "Zip Slip" 漏洞（利用 ../ 路径穿越攻击）
+            let outpath = match file.enclosed_name() {
+                Some(path) => output_dir.join(path),
+                None => continue,
+            };
+
+            if file.name().ends_with('/') {
+                // 如果是目录，则创建目录
+                std::fs::create_dir_all(&outpath).unwrap();
+            } else {
+                // 如果是文件，确保父目录存在
+                if let Some(p) = outpath.parent() {
+                    if !p.exists() {
+                        std::fs::create_dir_all(p).unwrap();
+                    }
+                }
+                // 创建输出文件并复制数据（流式写入，内存占用极小）
+                let mut outfile = std::fs::File::create(&outpath).unwrap();
+                std::io::copy(&mut file, &mut outfile).unwrap();
+            }
+
+            // 3. （可选）还原文件权限 (Unix 平台)
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::PermissionsExt;
+                if let Some(mode) = file.unix_mode() {
+                    fs::set_permissions(&outpath, fs::Permissions::from_mode(mode))?;
+                }
+            }*/
+        }
     }
 }

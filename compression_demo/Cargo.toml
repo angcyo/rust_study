@@ -21,3 +21,7 @@ lzma-rust2 = "0.16.2"
 # https://github.com/rust-lang/flate2-rs
 # https://crates.io/crates/flate2
 flate2 = "1.1.9"
+
+# Library to support the reading and writing of zip files.
+# https://crates.io/crates/zip
+zip = { version = "8.6.0", features = ["deflate"] }
