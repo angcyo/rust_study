@@ -108,6 +108,10 @@ pub enum FittedShape {
         radius: f64,
         rmse: f64,
     },
+    Triangle {
+        vertices: Vec<Point2D>,
+        rmse: f64,
+    },
     Rectangle {
         min_x: f64,
         min_y: f64,
@@ -147,12 +151,21 @@ pub enum FittedShape {
         wing_right: Point2D,
         rmse: f64,
     },
-    /// 五角形结构（包含五角形中心点、半径、旋转角度、5个顶点及其 OBB 边的 RMSE）
+    /// 五边形结构（包含五角形中心点、半径、旋转角度、5个顶点及其 OBB 边的 RMSE）
     Pentagon {
         center: Point2D,
         radius: f64,
         angle: f64,
         vertices: Vec<Point2D>,
+        rmse: f64,
+    },
+    /// 五角星结构
+    Star {
+        center_x: f64,
+        center_y: f64,
+        outer_radius: f64,
+        inner_radius: f64,
+        angle: f64,
         rmse: f64,
     },
     /// 心形结构
@@ -250,7 +263,15 @@ impl ShapeFitter {
             }
         }
 
-        // 3. 测试矩形
+        // 测试三角形
+        if let FittedShape::Triangle { vertices, rmse } = Self::fit_triangle(points) {
+            if rmse < min_rmse {
+                min_rmse = rmse;
+                best_shape = FittedShape::Triangle { vertices, rmse };
+            }
+        }
+
+        //  测试矩形
         if let FittedShape::Rectangle {
             min_x,
             min_y,
@@ -388,6 +409,30 @@ impl ShapeFitter {
                         center,
                         width,
                         height,
+                        rmse,
+                    };
+                }
+            }
+        }
+
+        if points.len() >= 10 {
+            if let FittedShape::Star {
+                center_x,
+                center_y,
+                outer_radius,
+                inner_radius,
+                angle,
+                rmse,
+            } = Self::fit_star(points)
+            {
+                if rmse < min_rmse {
+                    min_rmse = rmse;
+                    best_shape = FittedShape::Star {
+                        center_x,
+                        center_y,
+                        outer_radius,
+                        inner_radius,
+                        angle,
                         rmse,
                     };
                 }
@@ -565,6 +610,80 @@ impl ShapeFitter {
             }
         } else {
             FittedShape::Error("圆拟合失败".to_string())
+        }
+    }
+
+    /// 三角形高鲁棒性启发式拟合
+    pub fn fit_triangle(points: &[Point2D]) -> FittedShape {
+        let n = points.len();
+        if n < 3 {
+            return FittedShape::Error("数据点太少，无法构成三角形".to_string());
+        }
+
+        // 步骤 A: 计算质心并寻找第一个顶点 V0 (离质心最远的点)
+        let mut sum_x = 0.0;
+        let mut sum_y = 0.0;
+        for p in points {
+            sum_x += p.x;
+            sum_y += p.y;
+        }
+        let centroid = Point2D {
+            x: sum_x / n as f64,
+            y: sum_y / n as f64,
+        };
+
+        let mut max_d_sq = -1.0;
+        let mut v0 = points[0];
+        for p in points {
+            let d_sq = (p.x - centroid.x).powi(2) + (p.y - centroid.y).powi(2);
+            if d_sq > max_d_sq {
+                max_d_sq = d_sq;
+                v0 = *p;
+            }
+        }
+
+        // 步骤 B: 寻找第二个顶点 V1 (离 V0 最远的点)
+        let mut max_d_v0_sq = -1.0;
+        let mut v1 = points[0];
+        for p in points {
+            let d_sq = (p.x - v0.x).powi(2) + (p.y - v0.y).powi(2);
+            if d_sq > max_d_v0_sq {
+                max_d_v0_sq = d_sq;
+                v1 = *p;
+            }
+        }
+
+        // 步骤 C: 寻找第三个顶点 V2 (与 V0, V1 构成的三角形面积最大的点)
+        let mut max_area = -1.0;
+        let mut v2 = points[0];
+        for p in points {
+            // 叉积计算面积
+            let area = (v0.x * (v1.y - p.y) + v1.x * (p.y - v0.y) + p.x * (v0.y - v1.y)).abs();
+            if area > max_area {
+                max_area = area;
+                v2 = *p;
+            }
+        }
+
+        let vertices = [v0, v1, v2];
+
+        // 步骤 D: 计算所有原始采样点到三角形三条边的最短距离的 RMSE
+        let mut sum_sq_err = 0.0;
+        for p in points {
+            let mut min_edge_dist = f64::MAX;
+            for j in 0..3 {
+                let d = Self::point_to_segment_dist(*p, vertices[j], vertices[(j + 1) % 3]);
+                if d < min_edge_dist {
+                    min_edge_dist = d;
+                }
+            }
+            sum_sq_err += min_edge_dist.powi(2);
+        }
+        let rmse = (sum_sq_err / n as f64).sqrt();
+
+        FittedShape::Triangle {
+            vertices: vertices.to_vec(),
+            rmse,
         }
     }
 
@@ -1143,6 +1262,139 @@ impl ShapeFitter {
             rmse,
         }
     }
+
+    /// 五角星高鲁棒性极坐标频率特征拟合
+    pub fn fit_star(points: &[Point2D]) -> FittedShape {
+        let n = points.len();
+        if n < 10 {
+            return FittedShape::Error("点数太少，无法拟合五角星".to_string());
+        }
+
+        // 1. 计算空间质心 (中心点)
+        let mut sum_x = 0.0;
+        let mut sum_y = 0.0;
+        for p in points {
+            sum_x += p.x;
+            sum_y += p.y;
+        }
+        let cx = sum_x / n as f64;
+        let cy = sum_y / n as f64;
+
+        // 2. 转换为极坐标并记录最大半径
+        let mut max_r = 0.0;
+        let mut base_angle = 0.0;
+        let mut polar_points = Vec::with_capacity(n);
+
+        for p in points {
+            let dx = p.x - cx;
+            let dy = p.y - cy;
+            let r = (dx * dx + dy * dy).sqrt();
+            let angle = dy.atan2(dx);
+            polar_points.push((r, angle));
+            if r > max_r {
+                max_r = r;
+                base_angle = angle; // 以最远点作为初始方向基准
+            }
+        }
+
+        // 3. 5次对称性相位扫描 (寻找最优旋转角 angle)
+        use std::f64::consts::PI;
+        let period = 2.0 * PI / 5.0; // 五角星的 5 周期特性
+        let mut best_angle = base_angle;
+        let mut min_residual = f64::MAX;
+
+        // 在一个周期内进行 40 次细粒度扫描
+        let steps = 40;
+        for s in 0..steps {
+            let test_angle = base_angle - period / 2.0 + (s as f64) * (period / steps as f64);
+            let mut current_residual = 0.0;
+
+            for &(r, theta) in &polar_points {
+                // 用 5 周期余弦波近似初筛五角星轮廓
+                let ideal_cos = (5.0 * (theta - test_angle)).cos();
+                // 预测半径（假设内半径约为外半径的 0.4 倍）
+                let predicted_r = max_r * 0.7 + max_r * 0.3 * ideal_cos;
+                current_residual += (r - predicted_r).powi(2);
+            }
+
+            if current_residual < min_residual {
+                min_residual = current_residual;
+                best_angle = test_angle;
+            }
+        }
+
+        // 4. 锁定相位后，分类点集并精细化求解内外半径
+        let mut outer_sum = 0.0;
+        let mut outer_count = 0;
+        let mut inner_sum = 0.0;
+        let mut inner_count = 0;
+
+        for &(r, theta) in &polar_points {
+            let mut diff = (theta - best_angle) % period;
+            if diff < 0.0 {
+                diff += period;
+            }
+
+            // 夹角接近 0 或 period 说明在尖角附近（外径）
+            // 夹角接近 period / 2 说明在凹角附近（内径）
+            if diff < period / 4.0 || diff > 3.0 * period / 4.0 {
+                outer_sum += r;
+                outer_count += 1;
+            } else {
+                inner_sum += r;
+                inner_count += 1;
+            }
+        }
+
+        let outer_radius = if outer_count > 0 {
+            outer_sum / outer_count as f64
+        } else {
+            max_r
+        };
+        let inner_radius = if inner_count > 0 {
+            inner_sum / inner_count as f64
+        } else {
+            outer_radius * 0.381966
+        };
+
+        // 5. 生成理想的 10 个轮廓顶点，用于精确计算工业级几何 RMSE
+        let mut star_vertices = [Point2D { x: 0.0, y: 0.0 }; 10];
+        for i in 0..10 {
+            let a = best_angle + (i as f64) * (PI / 5.0);
+            let r = if i % 2 == 0 {
+                outer_radius
+            } else {
+                inner_radius
+            };
+            star_vertices[i] = Point2D {
+                x: cx + r * a.cos(),
+                y: cy + r * a.sin(),
+            };
+        }
+
+        let mut sum_sq_err = 0.0;
+        for p in points {
+            let mut min_edge_dist = f64::MAX;
+            for i in 0..10 {
+                let d =
+                    Self::point_to_segment_dist(*p, star_vertices[i], star_vertices[(i + 1) % 10]);
+                if d < min_edge_dist {
+                    min_edge_dist = d;
+                }
+            }
+            sum_sq_err += min_edge_dist.powi(2);
+        }
+        let rmse = (sum_sq_err / n as f64).sqrt();
+
+        FittedShape::Star {
+            center_x: cx,
+            center_y: cy,
+            outer_radius,
+            inner_radius,
+            angle: best_angle,
+            rmse,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -1338,6 +1590,14 @@ mod tests {
                 );
                 println!("{},{},{}", center_x, center_y, radius);
             }
+            FittedShape::Triangle { vertices, rmse } => {
+                let mut s = String::new();
+                for vertex in vertices {
+                    println!("x = {} y = {}", vertex.x, vertex.y);
+                    s.push_str(&format!("{},{},", vertex.x, vertex.y));
+                }
+                println!("{}", s);
+            }
             FittedShape::Rectangle {
                 min_x,
                 min_y,
@@ -1384,6 +1644,22 @@ mod tests {
                 );
                 println!("{},{},{},{},{}", center_x, center_y, axis_a, axis_b, angle);
             }
+            FittedShape::Pentagon {
+                center,
+                radius,
+                angle,
+                vertices,
+                rmse,
+            } => {
+                //拼接字符串
+                let mut s = String::new();
+                s.push_str(&format!("{},{},{},{},", center.x, center.y, radius, angle));
+                for vertex in vertices {
+                    println!("x = {} y = {}", vertex.x, vertex.y);
+                    s.push_str(&format!("{},{},", vertex.x, vertex.y));
+                }
+                println!("{}", s);
+            }
             FittedShape::Polygon { vertices } => {
                 //拼接字符串
                 let mut s = String::new();
@@ -1427,82 +1703,183 @@ mod tests {
 420.4,385.6
 414.79999999999995,375.2
 408.4,364.0";*/
-        let str = "530.8,547.2
-507.6,536.0
-482.79999999999995,523.2
-461.20000000000005,508.0
-450.0,498.4
-437.20000000000005,485.6
-430.0,478.4
-422.79999999999995,468.0
-413.20000000000005,448.0
-410.0,426.4
-410.0,416.0
-418.0,397.6
-426.79999999999995,388.8
-438.0,380.8
-455.6,370.4
-492.4,352.8
-509.20000000000005,346.4
-534.8,337.6
-558.8,329.6
-582.0,321.6
-616.4,312.8
-638.0,305.6
-667.6,298.4
-689.2,294.4
-710.8,290.4
-731.5999999999999,288.8
-743.5999999999999,288.8
-754.0,288.8
-765.2,288.8
-790.0,291.2
-817.2,295.2
-845.2,303.2
-854.8,306.4
-879.5999999999999,321.6
-891.5999999999999,329.6
-899.5999999999999,336.8
-907.5999999999999,345.6
-917.2,357.6
-923.5999999999999,368.0
-928.4000000000001,377.6
-934.8,390.4
-940.4000000000001,406.4
-942.0,419.2
-942.0,429.6
-937.2,442.4
-932.4000000000001,454.4
-926.8,463.2
-912.4000000000001,482.4
-902.8,493.6
-888.4000000000001,506.4
-879.5999999999999,512.8
-860.4000000000001,524.8
-845.2,532.0
-829.2,539.2
-818.0,542.4
-801.2,547.2
-782.0,550.4
-764.4000000000001,554.4
-747.5999999999999,559.2
-734.0,561.6
-722.0,564.0
-696.4,568.8
-679.6,571.2
-663.6,573.6
-652.4,573.6
-638.8,573.6
-625.2,573.6
-603.6,570.4
-589.2,568.8
-578.0,566.4
-567.6,564.0
-558.0,560.8
-549.2,556.0
-539.6,549.6
-530.8,544.8
-521.2,541.6";
+        let str = "579.6,409.6
+582.8,397.6
+588.4,386.4
+594.0,376.8
+601.2,362.4
+610.8,346.4
+617.2,336.8
+625.2,326.4
+641.2,308.8
+650.0,298.4
+658.8,289.6
+667.6,280.8
+686.0,262.4
+695.6,252.8
+705.2,247.2
+714.8,244.0
+714.8,260.8
+711.6,273.6
+710.8,289.6
+710.8,306.4
+709.2,327.2
+706.8,348.8
+703.6,364.8
+701.2,382.4
+696.4,403.2
+694.0,419.2
+692.4,429.6
+688.4,448.8
+687.6,460.0
+686.0,472.0
+683.6,487.20000000000005
+680.4,501.6
+690.0,508.79999999999995
+702.0,512.8
+712.4,516.8
+726.8,526.4
+742.0,539.2
+752.4000000000001,548.8
+762.8,557.6
+772.4000000000001,565.6
+780.4000000000001,572.0
+796.4000000000001,584.8
+810.0,597.6
+822.0,608.8
+829.2,616.0
+838.0,624.8
+846.0,632.8
+833.2,636.8
+822.8,636.0
+810.8,634.4
+788.4000000000001,629.6
+771.5999999999999,626.4
+761.2,623.2
+746.0,620.0
+730.0,616.0
+702.8,608.8
+687.6,603.2
+678.0,598.4
+659.6,588.8
+646.8,581.6
+638.0,576.8
+627.6,569.6
+618.8,564.0
+610.0,558.4
+602.8,551.2
+598.8,564.0
+595.6,577.6
+591.6,590.4
+583.6,614.4
+578.8,624.0
+575.6,633.6
+570.0,646.4
+563.6,657.6
+556.4,672.0
+546.8,690.4
+537.2,706.4
+526.8,721.6
+518.8,731.2
+510.0,742.4
+502.0,750.4
+494.0,757.6
+486.79999999999995,767.2
+480.4,776.8
+476.4,764.0
+476.4,753.6
+476.4,741.6
+477.20000000000005,722.4
+481.20000000000005,704.8
+483.6,694.4
+486.0,680.8
+492.4,659.2
+496.4,643.2
+502.0,619.2
+507.6,600.0
+513.2,580.8
+516.4,568.0
+519.6,557.6
+520.4,547.2
+509.20000000000005,540.0
+498.0,539.2
+486.0,538.4
+473.20000000000005,536.0
+457.20000000000005,534.4
+433.20000000000005,532.8
+414.0,530.4
+398.0,529.6
+384.4,528.0
+372.4,525.6
+355.6,523.2
+344.4,521.6
+329.20000000000005,517.6
+314.79999999999995,512.8
+305.20000000000005,509.6
+286.79999999999995,501.6
+270.0,493.6
+258.0,488.0
+248.39999999999998,484.0
+251.60000000000002,473.6
+264.4,472.0
+275.6,472.0
+286.0,472.0
+296.4,472.0
+313.20000000000005,470.4
+329.20000000000005,469.6
+343.6,469.6
+362.79999999999995,468.0
+375.6,468.0
+394.79999999999995,468.0
+410.79999999999995,467.20000000000005
+422.79999999999995,467.20000000000005
+440.4,465.6
+454.0,464.79999999999995
+464.4,462.4
+481.20000000000005,460.8
+495.6,459.2
+508.4,459.2
+500.4,449.6
+489.20000000000005,441.6
+480.4,433.6
+470.79999999999995,426.4
+455.6,413.6
+448.4,405.6
+434.0,392.8
+426.79999999999995,384.8
+416.4,374.4
+404.4,362.4
+393.20000000000005,349.6
+386.0,340.8
+371.6,323.2
+363.6,313.6
+353.20000000000005,300.0
+345.20000000000005,284.0
+338.79999999999995,271.2
+334.79999999999995,260.8
+343.6,253.60000000000002
+360.4,255.2
+375.6,258.4
+391.6,261.6
+402.79999999999995,264.8
+414.0,267.2
+434.79999999999995,274.4
+444.4,279.2
+464.4,288.8
+475.6,293.6
+491.6,302.4
+502.79999999999995,308.0
+512.4,312.0
+532.4,320.0
+543.6,325.6
+553.2,331.2
+567.6,339.2
+578.0,345.6
+586.8,351.2
+595.6,356.8
+602.0,364.8
+606.0,375.2
+607.6,385.6";
         let points: Vec<Point2D> = str
             .split("\n")
             .map(|s| {
