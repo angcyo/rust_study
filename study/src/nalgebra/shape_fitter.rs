@@ -193,6 +193,8 @@ impl ShapeFitter {
     ///     如果设为 10.0 ~ 15.0（像素）：比较严格。用户必须画得相对比较像圆或矩形，系统才会收敛为标准图形，否则会放行判定为多边形。
     ///     如果设为 30.0（像素）：非常宽松。哪怕用户画了一个极其扭曲、像鸭蛋一样的圈，系统也会强行把它矫正为标准的圆。
     /// - [line_penalty_ratio] 如果识别到直线时, 其它图形的识别惩罚系数
+    /// - [rect_penalty_ratio] 如果识别到矩形时, 旋转矩形的识别惩罚系数
+    /// - [circle_penalty_ratio] 如果识别到圆形时, 椭圆的识别惩罚系数
     /// - [closed_threshold_ratio] 闭合形状判定阈值比例
     ///     首尾点距离占到轨迹长度的阈值比例。
     pub fn classify_and_fit(
@@ -200,6 +202,8 @@ impl ShapeFitter {
         polygon_epsilon: f64,
         threshold: f64,
         line_penalty_ratio: f64,
+        rect_penalty_ratio: f64,
+        circle_penalty_ratio: f64,
         closed_threshold_ratio: f64,
     ) -> FittedShape {
         if points.len() < 2 {
@@ -212,6 +216,10 @@ impl ShapeFitter {
 
         //优先线的识别, 其它图形的惩罚系数
         let mut line_penalty_factor = 1.0;
+        //优先识别矩形, 再旋转矩形
+        let mut rect_penalty_factor = 1.0;
+        //优先识别圆形, 再椭圆
+        let mut circle_penalty_factor = 1.0;
 
         //MARK: - 以下是非闭合图形识别
 
@@ -293,6 +301,7 @@ impl ShapeFitter {
             } = Self::fit_circle(points)
             {
                 if rmse < min_rmse {
+                    circle_penalty_factor = circle_penalty_ratio;
                     min_rmse = rmse;
                     best_shape = FittedShape::Circle {
                         center_x,
@@ -323,6 +332,7 @@ impl ShapeFitter {
         {
             if rmse < min_rmse {
                 min_rmse = rmse;
+                rect_penalty_factor = rect_penalty_ratio;
                 best_shape = FittedShape::Rectangle {
                     min_x,
                     min_y,
@@ -338,7 +348,7 @@ impl ShapeFitter {
             if let FittedShape::RotatedRectangle { vertices, rmse } =
                 Self::fit_rotated_rectangle(points)
             {
-                if rmse < min_rmse {
+                if rmse * rect_penalty_factor < min_rmse {
                     min_rmse = rmse;
                     best_shape = FittedShape::RotatedRectangle { vertices, rmse };
                 }
@@ -356,7 +366,7 @@ impl ShapeFitter {
                 rmse,
             } = Self::fit_ellipse(points)
             {
-                if rmse < min_rmse {
+                if rmse * rect_penalty_factor < min_rmse {
                     min_rmse = rmse;
                     best_shape = FittedShape::Ellipse {
                         center_x,
@@ -1557,7 +1567,7 @@ mod tests {
     #[test]
     fn test_classify_and_fit() {
         let points = read_points();
-        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0, 1.5, 0.15);
+        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0, 1.5, 1.5, 1.5, 0.15);
         println!("{:?}", result);
         match result {
             FittedShape::Line {
