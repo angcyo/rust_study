@@ -192,12 +192,14 @@ impl ShapeFitter {
     /// - [threshold]（形状判定硬阈值）：代表允许的最大平均像素偏差。
     ///     如果设为 10.0 ~ 15.0（像素）：比较严格。用户必须画得相对比较像圆或矩形，系统才会收敛为标准图形，否则会放行判定为多边形。
     ///     如果设为 30.0（像素）：非常宽松。哪怕用户画了一个极其扭曲、像鸭蛋一样的圈，系统也会强行把它矫正为标准的圆。
+    /// - [line_penalty_ratio] 如果识别到直线时, 其它图形的识别惩罚系数
     /// - [closed_threshold_ratio] 闭合形状判定阈值比例
     ///     首尾点距离占到轨迹长度的阈值比例。
     pub fn classify_and_fit(
         points: &[Point2D],
         polygon_epsilon: f64,
         threshold: f64,
+        line_penalty_ratio: f64,
         closed_threshold_ratio: f64,
     ) -> FittedShape {
         if points.len() < 2 {
@@ -220,9 +222,9 @@ impl ShapeFitter {
             rmse,
         } = Self::fit_line(points)
         {
-            if rmse < min_rmse {
+            if rmse < threshold {
                 min_rmse = rmse;
-                line_penalty_factor = 1.5;
+                line_penalty_factor = line_penalty_ratio;
                 best_shape = FittedShape::Line {
                     slope,
                     intercept,
@@ -1555,7 +1557,7 @@ mod tests {
     #[test]
     fn test_classify_and_fit() {
         let points = read_points();
-        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0, 0.15);
+        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0, 1.5, 0.15);
         println!("{:?}", result);
         match result {
             FittedShape::Line {
