@@ -133,10 +133,11 @@ pub enum FittedShape {
         angle: f64,
         rmse: f64,
     },
+    /// 多边形结构
     Polygon {
         vertices: Vec<Point2D>,
     },
-    // → 箭头结构(非V字箭头)：包含主干起点、箭头尖端、左翼尖、右翼尖以及均方根误差
+    /// → 箭头结构(非V字箭头)：包含主干起点、箭头尖端、左翼尖、右翼尖以及均方根误差
     Arrow {
         shaft_start: Point2D,
         tip: Point2D,
@@ -144,7 +145,7 @@ pub enum FittedShape {
         wing_right: Point2D,
         rmse: f64,
     },
-    // 精准适配 3个点、2条边的 V 字形箭头
+    /// 精准适配 3个点、2条边的 V 字形箭头
     VArrow {
         tip: Point2D,
         wing_left: Point2D,
@@ -187,23 +188,30 @@ impl ShapeFitter {
     /// 最标准的方法是计算每个原始点到拟合出的标准几何边缘的最短几何距离（正交残差）。
     ///
     /// - [polygon_epsilon]（多边形简化拟合度）：
-    /// 通常设为 2.0 ~ 4.0。用于过滤手写多边形（如三角形、五角星）时手指的高频抖动。
+    ///     通常设为 2.0 ~ 4.0。用于过滤手写多边形（如三角形、五角星）时手指的高频抖动。
     /// - [threshold]（形状判定硬阈值）：代表允许的最大平均像素偏差。
-    /// 如果设为 10.0 ~ 15.0（像素）：比较严格。用户必须画得相对比较像圆或矩形，系统才会收敛为标准图形，否则会放行判定为多边形。
-    /// 如果设为 30.0（像素）：非常宽松。哪怕用户画了一个极其扭曲、像鸭蛋一样的圈，系统也会强行把它矫正为标准的圆。
+    ///     如果设为 10.0 ~ 15.0（像素）：比较严格。用户必须画得相对比较像圆或矩形，系统才会收敛为标准图形，否则会放行判定为多边形。
+    ///     如果设为 30.0（像素）：非常宽松。哪怕用户画了一个极其扭曲、像鸭蛋一样的圈，系统也会强行把它矫正为标准的圆。
+    /// - [closed_threshold_ratio] 闭合形状判定阈值比例
+    ///     首尾点距离占到轨迹长度的阈值比例。
     pub fn classify_and_fit(
         points: &[Point2D],
         polygon_epsilon: f64,
         threshold: f64,
+        closed_threshold_ratio: f64,
     ) -> FittedShape {
         if points.len() < 2 {
             return FittedShape::Error("点数过少，无法识别".to_string());
         }
+        let is_closed = ClosureDetector::is_closed(points, closed_threshold_ratio);
 
         let mut best_shape = FittedShape::Error("无法拟合任何形状".to_string());
         let mut min_rmse = f64::MAX;
-        //惩罚系数
-        let mut penalty_factor = 1.0;
+
+        //优先线的识别, 其它图形的惩罚系数
+        let mut line_penalty_factor = 1.0;
+
+        //MARK: - 以下是非闭合图形识别
 
         // 1. 测试直线
         if let FittedShape::Line {
@@ -214,7 +222,7 @@ impl ShapeFitter {
         {
             if rmse < min_rmse {
                 min_rmse = rmse;
-                penalty_factor = 1.5;
+                line_penalty_factor = 1.5;
                 best_shape = FittedShape::Line {
                     slope,
                     intercept,
@@ -222,6 +230,56 @@ impl ShapeFitter {
                 };
             }
         }
+
+        // 测试箭头 (通常传入稍微大一点的 epsilon 以提取核心骨架)
+        if points.len() >= 4 {
+            if let FittedShape::Arrow {
+                shaft_start,
+                tip,
+                wing_left,
+                wing_right,
+                rmse,
+            } = Self::fit_arrow(points, polygon_epsilon)
+            {
+                if rmse * line_penalty_factor < min_rmse {
+                    min_rmse = rmse;
+                    best_shape = FittedShape::Arrow {
+                        shaft_start,
+                        tip,
+                        wing_left,
+                        wing_right,
+                        rmse,
+                    };
+                }
+            }
+        }
+
+        // 测试V箭头 (通常传入稍微大一点的 epsilon 以提取核心骨架)
+        if points.len() >= 3 {
+            if let FittedShape::VArrow {
+                tip,
+                wing_left,
+                wing_right,
+                rmse,
+            } = Self::fit_v_arrow(points)
+            {
+                if rmse * line_penalty_factor < min_rmse {
+                    min_rmse = rmse;
+                    best_shape = FittedShape::VArrow {
+                        tip,
+                        wing_left,
+                        wing_right,
+                        rmse,
+                    };
+                }
+            }
+        }
+
+        if !is_closed && min_rmse < threshold {
+            return best_shape;
+        }
+
+        //MARK: - 以下是闭合图形识别
 
         // 2. 测试圆
         if points.len() >= 3 {
@@ -233,31 +291,12 @@ impl ShapeFitter {
             } = Self::fit_circle(points)
             {
                 if rmse < min_rmse {
-                    let circle_shape = FittedShape::Circle {
+                    min_rmse = rmse;
+                    best_shape = FittedShape::Circle {
                         center_x,
                         center_y,
                         radius,
                         rmse,
-                    };
-                    let line_or_circle = match best_shape {
-                        FittedShape::Line {
-                            slope,
-                            intercept,
-                            rmse,
-                        } => Self::arbitrate_line_vs_circle(points, best_shape, circle_shape, rmse),
-                        _ => circle_shape,
-                    };
-                    best_shape = line_or_circle;
-                    match best_shape {
-                        FittedShape::Circle {
-                            center_x,
-                            center_y,
-                            radius,
-                            rmse,
-                        } => {
-                            min_rmse = rmse;
-                        }
-                        _ => {}
                     };
                 }
             }
@@ -297,7 +336,7 @@ impl ShapeFitter {
             if let FittedShape::RotatedRectangle { vertices, rmse } =
                 Self::fit_rotated_rectangle(points)
             {
-                if rmse * penalty_factor < min_rmse {
+                if rmse < min_rmse {
                     min_rmse = rmse;
                     best_shape = FittedShape::RotatedRectangle { vertices, rmse };
                 }
@@ -323,50 +362,6 @@ impl ShapeFitter {
                         axis_a,
                         axis_b,
                         angle,
-                        rmse,
-                    };
-                }
-            }
-        }
-
-        // 测试箭头 (通常传入稍微大一点的 epsilon 以提取核心骨架)
-        if points.len() >= 4 {
-            if let FittedShape::Arrow {
-                shaft_start,
-                tip,
-                wing_left,
-                wing_right,
-                rmse,
-            } = Self::fit_arrow(points, polygon_epsilon)
-            {
-                if rmse < min_rmse {
-                    min_rmse = rmse;
-                    best_shape = FittedShape::Arrow {
-                        shaft_start,
-                        tip,
-                        wing_left,
-                        wing_right,
-                        rmse,
-                    };
-                }
-            }
-        }
-
-        // 测试V箭头 (通常传入稍微大一点的 epsilon 以提取核心骨架)
-        if points.len() >= 3 {
-            if let FittedShape::VArrow {
-                tip,
-                wing_left,
-                wing_right,
-                rmse,
-            } = Self::fit_v_arrow(points)
-            {
-                if rmse < min_rmse {
-                    min_rmse = rmse;
-                    best_shape = FittedShape::VArrow {
-                        tip,
-                        wing_left,
-                        wing_right,
                         rmse,
                     };
                 }
@@ -1560,7 +1555,7 @@ mod tests {
     #[test]
     fn test_classify_and_fit() {
         let points = read_points();
-        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0);
+        let result = ShapeFitter::classify_and_fit(&points, 2.0, 15.0, 0.15);
         println!("{:?}", result);
         match result {
             FittedShape::Line {
@@ -1703,183 +1698,48 @@ mod tests {
 420.4,385.6
 414.79999999999995,375.2
 408.4,364.0";*/
-        let str = "579.6,409.6
-582.8,397.6
-588.4,386.4
-594.0,376.8
-601.2,362.4
-610.8,346.4
-617.2,336.8
-625.2,326.4
-641.2,308.8
-650.0,298.4
-658.8,289.6
-667.6,280.8
-686.0,262.4
-695.6,252.8
-705.2,247.2
-714.8,244.0
-714.8,260.8
-711.6,273.6
-710.8,289.6
-710.8,306.4
-709.2,327.2
-706.8,348.8
-703.6,364.8
-701.2,382.4
-696.4,403.2
-694.0,419.2
-692.4,429.6
-688.4,448.8
-687.6,460.0
-686.0,472.0
-683.6,487.20000000000005
-680.4,501.6
-690.0,508.79999999999995
-702.0,512.8
-712.4,516.8
-726.8,526.4
-742.0,539.2
-752.4000000000001,548.8
-762.8,557.6
-772.4000000000001,565.6
-780.4000000000001,572.0
-796.4000000000001,584.8
-810.0,597.6
-822.0,608.8
-829.2,616.0
-838.0,624.8
-846.0,632.8
-833.2,636.8
-822.8,636.0
-810.8,634.4
-788.4000000000001,629.6
-771.5999999999999,626.4
-761.2,623.2
-746.0,620.0
-730.0,616.0
-702.8,608.8
-687.6,603.2
-678.0,598.4
-659.6,588.8
-646.8,581.6
-638.0,576.8
-627.6,569.6
-618.8,564.0
-610.0,558.4
-602.8,551.2
-598.8,564.0
-595.6,577.6
-591.6,590.4
-583.6,614.4
-578.8,624.0
-575.6,633.6
-570.0,646.4
-563.6,657.6
-556.4,672.0
-546.8,690.4
-537.2,706.4
-526.8,721.6
-518.8,731.2
-510.0,742.4
-502.0,750.4
-494.0,757.6
-486.79999999999995,767.2
-480.4,776.8
-476.4,764.0
-476.4,753.6
-476.4,741.6
-477.20000000000005,722.4
-481.20000000000005,704.8
-483.6,694.4
-486.0,680.8
-492.4,659.2
-496.4,643.2
-502.0,619.2
-507.6,600.0
-513.2,580.8
-516.4,568.0
-519.6,557.6
-520.4,547.2
-509.20000000000005,540.0
-498.0,539.2
-486.0,538.4
-473.20000000000005,536.0
-457.20000000000005,534.4
-433.20000000000005,532.8
-414.0,530.4
-398.0,529.6
-384.4,528.0
-372.4,525.6
-355.6,523.2
-344.4,521.6
-329.20000000000005,517.6
-314.79999999999995,512.8
-305.20000000000005,509.6
-286.79999999999995,501.6
-270.0,493.6
-258.0,488.0
-248.39999999999998,484.0
-251.60000000000002,473.6
-264.4,472.0
-275.6,472.0
-286.0,472.0
-296.4,472.0
-313.20000000000005,470.4
-329.20000000000005,469.6
-343.6,469.6
-362.79999999999995,468.0
-375.6,468.0
-394.79999999999995,468.0
-410.79999999999995,467.20000000000005
-422.79999999999995,467.20000000000005
-440.4,465.6
-454.0,464.79999999999995
-464.4,462.4
-481.20000000000005,460.8
-495.6,459.2
-508.4,459.2
-500.4,449.6
-489.20000000000005,441.6
-480.4,433.6
-470.79999999999995,426.4
-455.6,413.6
-448.4,405.6
-434.0,392.8
-426.79999999999995,384.8
-416.4,374.4
-404.4,362.4
-393.20000000000005,349.6
-386.0,340.8
-371.6,323.2
-363.6,313.6
-353.20000000000005,300.0
-345.20000000000005,284.0
-338.79999999999995,271.2
-334.79999999999995,260.8
-343.6,253.60000000000002
-360.4,255.2
-375.6,258.4
-391.6,261.6
-402.79999999999995,264.8
-414.0,267.2
-434.79999999999995,274.4
-444.4,279.2
-464.4,288.8
-475.6,293.6
-491.6,302.4
-502.79999999999995,308.0
-512.4,312.0
-532.4,320.0
-543.6,325.6
-553.2,331.2
-567.6,339.2
-578.0,345.6
-586.8,351.2
-595.6,356.8
-602.0,364.8
-606.0,375.2
-607.6,385.6";
+        let str = "486.79999999999995,348.0
+500.4,353.6
+525.2,361.6
+542.0,365.6
+566.0,371.2
+592.4,378.4
+625.2,386.4
+650.8,394.4
+708.4,408.0
+731.5999999999999,413.6
+745.2,416.8
+756.4000000000001,419.2
+773.2,422.4
+784.4000000000001,425.6
+798.0,428.0
+811.5999999999999,431.2
+823.5999999999999,433.6
+838.8,437.6
+852.4000000000001,440.8
+869.2,444.0
+866.8,454.4
+854.8,460.8
+834.0,476.0
+811.5999999999999,492.0
+787.5999999999999,507.20000000000005
+773.2,514.4
+762.0,521.6
+743.5999999999999,530.4
+732.4000000000001,535.2
+718.0,540.8
+707.6,546.4
+690.0,551.2
+675.6,556.0
+664.4,558.4
+646.8,561.6
+626.0,565.6
+614.8,567.2
+603.6,570.4
+594.0,575.2
+584.4,583.2
+574.0,591.2
+564.4,597.6";
         let points: Vec<Point2D> = str
             .split("\n")
             .map(|s| {
