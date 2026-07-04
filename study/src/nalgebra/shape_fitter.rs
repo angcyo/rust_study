@@ -366,7 +366,7 @@ impl ShapeFitter {
                 rmse,
             } = Self::fit_ellipse(points)
             {
-                if rmse * rect_penalty_factor < min_rmse {
+                if rmse * circle_penalty_factor < min_rmse {
                     min_rmse = rmse;
                     best_shape = FittedShape::Ellipse {
                         center_x,
