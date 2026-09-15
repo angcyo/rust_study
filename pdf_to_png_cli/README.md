@@ -14,3 +14,7 @@ Options:
   -h, --help             Print help
   -V, --version          Print version
 ```
+
+https://www.pdfgear.com/pdf-to-png/
+
+https://www.pdfgear.com/pdf-to-jpg/
