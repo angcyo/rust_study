@@ -1,0 +1,15 @@
+[package]
+name = "pdf_to_png_cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# 命令行解析
+# https://crates.io/crates/clap
+clap = { version = "4.6.7", features = ["derive"] }
+# https://crates.io/crates/clap_builder
+clap_builder = "4.6.7"
+
+# 纯 Rust PDF 工具包
+# https://crates.io/crates/pdfrs
+pdfrs = "0.1.12"

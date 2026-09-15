@@ -22,6 +22,7 @@ members = [
     "rc_test",
     "hex_to_bin_cli",
     "resize_image_cli",
+    "pdf_to_png_cli",
 ]
 
 [profile.release]
